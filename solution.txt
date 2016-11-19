@@ -1,0 +1,21 @@
+1. insert into User (uname, upassword, name) values ('lululiu008', 123456, 'Yiwei Liu');
+2. select * 
+	from Recipe R natural join Recipe_Tag RT natural join Tag T 
+	where T.ttitle = 'italian' and R.rdescription like '%broccoli%';
+3. select name 
+	from user natural join reserve natural join event 
+	group by uid, gid 
+	having gid = (select gid from ggroup where gname = 'Park Slope Cake Club') and count(event.eid) > 3; 
+4. select r.rtitle, r.rid 
+	from recipe r natural join recipe_tag rt natural join ingredient i natural join tag t 
+	where t.ttitle = 'cake' and i.iname = 'sugar' and i.iquantity / r.rserving > 50;
+5. insert into review (rid, uid, rrate, rtext, rvtitle) 
+	values (8, 3, 5, 'Really, really, tasty!', 'Yummy!');
+6. select r.rtitle, (sum(rv.rrate) / count(*)) as average_rate 
+	from recipe r, review rv 
+	where r.rid = rv.rid and r.rdescription like '%tuna%' 
+	group by r.rtitle 
+	order by average_rate desc;
+7. select r1.rtitle, r1.rid 
+	from recipe r1, link_recipe l, recipe r2 
+	where r1.rid = l.rid and l.rid_link = r2.rid and r2.rdescription like '%tuna%';

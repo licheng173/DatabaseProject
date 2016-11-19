@@ -1,3 +1,4 @@
+create database CookZilla;
 use CookZilla;
 -- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
 --

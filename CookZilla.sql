@@ -1,5 +1,5 @@
 use CookZilla;
--- MySQL dump 10.13  Distrib 5.7.11, for osx10.9 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
 --
 -- Host: localhost    Database: CookZilla
 -- ------------------------------------------------------
@@ -32,7 +32,7 @@ CREATE TABLE `Event` (
   PRIMARY KEY (`eid`),
   KEY `gid` (`gid`),
   CONSTRAINT `gid_Event_GGroup` FOREIGN KEY (`gid`) REFERENCES `GGroup` (`gid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,6 +41,7 @@ CREATE TABLE `Event` (
 
 LOCK TABLES `Event` WRITE;
 /*!40000 ALTER TABLE `Event` DISABLE KEYS */;
+INSERT INTO `Event` VALUES (1,1,'2016-11-15 10:16:38','central park',NULL),(2,2,'2016-11-09 14:13:06','bryant park',NULL),(3,1,'2016-12-15 08:17:05','Wall Street',NULL),(4,1,'2016-11-25 11:05:02','Roosevelt Island','llala'),(5,1,'2016-11-26 00:00:00','brooklyn bridge','cool');
 /*!40000 ALTER TABLE `Event` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,7 +59,7 @@ CREATE TABLE `GGroup` (
   `gdescription` text,
   PRIMARY KEY (`gid`),
   UNIQUE KEY `gname` (`gname`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,6 +68,7 @@ CREATE TABLE `GGroup` (
 
 LOCK TABLES `GGroup` WRITE;
 /*!40000 ALTER TABLE `GGroup` DISABLE KEYS */;
+INSERT INTO `GGroup` VALUES (1,'Park Slope Cake Club',NULL,NULL),(2,'Some forks',NULL,NULL);
 /*!40000 ALTER TABLE `GGroup` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,6 +94,7 @@ CREATE TABLE `Ingredient` (
 
 LOCK TABLES `Ingredient` WRITE;
 /*!40000 ALTER TABLE `Ingredient` DISABLE KEYS */;
+INSERT INTO `Ingredient` VALUES (7,'sugar',200);
 /*!40000 ALTER TABLE `Ingredient` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,6 +121,7 @@ CREATE TABLE `Join_Group` (
 
 LOCK TABLES `Join_Group` WRITE;
 /*!40000 ALTER TABLE `Join_Group` DISABLE KEYS */;
+INSERT INTO `Join_Group` VALUES (1,1),(2,1),(3,1),(4,1),(1,2),(3,2),(4,2);
 /*!40000 ALTER TABLE `Join_Group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,6 +148,7 @@ CREATE TABLE `Link_Recipe` (
 
 LOCK TABLES `Link_Recipe` WRITE;
 /*!40000 ALTER TABLE `Link_Recipe` DISABLE KEYS */;
+INSERT INTO `Link_Recipe` VALUES (8,3),(6,7),(4,9),(5,9),(3,10);
 /*!40000 ALTER TABLE `Link_Recipe` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -166,6 +171,7 @@ CREATE TABLE `Rate` (
 
 LOCK TABLES `Rate` WRITE;
 /*!40000 ALTER TABLE `Rate` DISABLE KEYS */;
+INSERT INTO `Rate` VALUES (1),(2),(3),(4),(5);
 /*!40000 ALTER TABLE `Rate` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -185,7 +191,7 @@ CREATE TABLE `Recipe` (
   PRIMARY KEY (`rid`),
   KEY `uid` (`uid`),
   CONSTRAINT `uid_Recipe_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -194,6 +200,7 @@ CREATE TABLE `Recipe` (
 
 LOCK TABLES `Recipe` WRITE;
 /*!40000 ALTER TABLE `Recipe` DISABLE KEYS */;
+INSERT INTO `Recipe` VALUES (3,1,'Good Stuff',2,'broccoli with shrimp'),(4,3,'Zuo Zong Ji',3,'it is actually chicken broccoli.'),(5,5,'Tasty Soup ',1,'Cheese Soup'),(6,2,'cool food',3,'Broccoli fried rice.'),(7,2,'Key lime pie',2,'Key lime pie, cake.'),(8,4,'Grandma’s Fettuccini Alfredo',3,'nobody know what that is'),(9,2,'Some fish dish',2,'mainly tuna, some vegetables'),(10,3,'Daddy\'s secret dish',3,'lots of tuna');
 /*!40000 ALTER TABLE `Recipe` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -246,6 +253,7 @@ CREATE TABLE `Recipe_Tag` (
 
 LOCK TABLES `Recipe_Tag` WRITE;
 /*!40000 ALTER TABLE `Recipe_Tag` DISABLE KEYS */;
+INSERT INTO `Recipe_Tag` VALUES (3,1),(6,1),(4,2),(5,4),(7,6);
 /*!40000 ALTER TABLE `Recipe_Tag` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,7 +274,7 @@ CREATE TABLE `Report` (
   KEY `eid` (`eid`),
   CONSTRAINT `eid_Report_Event` FOREIGN KEY (`eid`) REFERENCES `Event` (`eid`),
   CONSTRAINT `uid_Report_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -275,6 +283,7 @@ CREATE TABLE `Report` (
 
 LOCK TABLES `Report` WRITE;
 /*!40000 ALTER TABLE `Report` DISABLE KEYS */;
+INSERT INTO `Report` VALUES (1,1,2,'interesting'),(2,2,4,'not bad'),(3,3,3,'had a good day');
 /*!40000 ALTER TABLE `Report` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -327,6 +336,7 @@ CREATE TABLE `Reserve` (
 
 LOCK TABLES `Reserve` WRITE;
 /*!40000 ALTER TABLE `Reserve` DISABLE KEYS */;
+INSERT INTO `Reserve` VALUES (2,1),(5,1),(4,2),(1,3),(2,3),(3,3),(4,3),(5,3),(1,4),(2,4);
 /*!40000 ALTER TABLE `Reserve` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -343,7 +353,7 @@ CREATE TABLE `Review` (
   `uid` int(11) unsigned NOT NULL,
   `rrate` int(1) unsigned DEFAULT NULL,
   `rtext` text NOT NULL,
-  `rtitle` varchar(45) NOT NULL,
+  `rvtitle` varchar(45) NOT NULL,
   PRIMARY KEY (`r_id`),
   KEY `rid` (`rid`),
   KEY `rrate` (`rrate`),
@@ -351,7 +361,7 @@ CREATE TABLE `Review` (
   CONSTRAINT `rid_Review_Recipe` FOREIGN KEY (`rid`) REFERENCES `Recipe` (`rid`),
   CONSTRAINT `rrate_Review_Rate` FOREIGN KEY (`rrate`) REFERENCES `Rate` (`rank`),
   CONSTRAINT `uid_Review_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -360,6 +370,7 @@ CREATE TABLE `Review` (
 
 LOCK TABLES `Review` WRITE;
 /*!40000 ALTER TABLE `Review` DISABLE KEYS */;
+INSERT INTO `Review` VALUES (2,8,3,5,'Really, really, tasty!','Yummy!'),(3,8,3,5,'Really, really, tasty!','Yummy!'),(4,9,1,4,'good',''),(5,9,5,3,'not bad',''),(6,10,1,3,'ok',''),(7,10,2,1,'awful','');
 /*!40000 ALTER TABLE `Review` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -403,7 +414,7 @@ CREATE TABLE `Review_Suggestion` (
   PRIMARY KEY (`sid`),
   KEY `r_id` (`r_id`),
   CONSTRAINT `r_id_RS_Review` FOREIGN KEY (`r_id`) REFERENCES `Review` (`r_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -412,6 +423,7 @@ CREATE TABLE `Review_Suggestion` (
 
 LOCK TABLES `Review_Suggestion` WRITE;
 /*!40000 ALTER TABLE `Review_Suggestion` DISABLE KEYS */;
+INSERT INTO `Review_Suggestion` VALUES (1,4,'less water'),(2,5,'more spicy'),(3,5,'less sugar');
 /*!40000 ALTER TABLE `Review_Suggestion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -426,7 +438,7 @@ CREATE TABLE `Tag` (
   `tid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ttitle` varchar(20) NOT NULL,
   PRIMARY KEY (`tid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -435,7 +447,32 @@ CREATE TABLE `Tag` (
 
 LOCK TABLES `Tag` WRITE;
 /*!40000 ALTER TABLE `Tag` DISABLE KEYS */;
+INSERT INTO `Tag` VALUES (1,'italian'),(2,'chinese'),(3,'vegan'),(4,'soup'),(5,'spicy'),(6,'cake');
 /*!40000 ALTER TABLE `Tag` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Unit_Conversion`
+--
+
+DROP TABLE IF EXISTS `Unit_Conversion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Unit_Conversion` (
+  `unit_name` varchar(20) NOT NULL,
+  `quantity_in_gram` double unsigned NOT NULL,
+  PRIMARY KEY (`unit_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Unit_Conversion`
+--
+
+LOCK TABLES `Unit_Conversion` WRITE;
+/*!40000 ALTER TABLE `Unit_Conversion` DISABLE KEYS */;
+INSERT INTO `Unit_Conversion` VALUES ('ounce',28.3),('pinch',0.25),('teaspoon',5);
+/*!40000 ALTER TABLE `Unit_Conversion` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -449,10 +486,11 @@ CREATE TABLE `User` (
   `uid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uname` varchar(45) NOT NULL,
   `upassword` varchar(45) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
   `uprofile` text,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `uname` (`uname`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -461,6 +499,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
+INSERT INTO `User` VALUES (1,'lululiu008','123456','Yiwei Liu',NULL),(2,'licheng173','123456','Cheng Li',NULL),(3,'fgl','123456','Gulin Fu',NULL),(4,'cl','asdf','Changyuan Li',NULL),(5,'yds','df34ty','Yandong Sun',NULL);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -473,4 +512,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-18 15:37:04
+-- Dump completed on 2016-11-18 19:31:04

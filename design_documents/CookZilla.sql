@@ -1,6 +1,6 @@
 create database CookZilla;
 use CookZilla;
--- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.11, for osx10.9 (x86_64)
 --
 -- Host: localhost    Database: CookZilla
 -- ------------------------------------------------------
@@ -259,6 +259,35 @@ INSERT INTO `Recipe_Tag` VALUES (3,1),(6,1),(4,2),(5,4),(7,6);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Recipe_View`
+--
+
+DROP TABLE IF EXISTS `Recipe_View`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Recipe_View` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int(11) unsigned NOT NULL,
+  `rid` int(11) unsigned NOT NULL,
+  `vtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `uid` (`uid`),
+  KEY `rid` (`rid`),
+  CONSTRAINT `rid_RV_Recipe` FOREIGN KEY (`rid`) REFERENCES `Recipe` (`rid`),
+  CONSTRAINT `uid_RV_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Recipe_View`
+--
+
+LOCK TABLES `Recipe_View` WRITE;
+/*!40000 ALTER TABLE `Recipe_View` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Recipe_View` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Report`
 --
 
@@ -429,6 +458,33 @@ INSERT INTO `Review_Suggestion` VALUES (1,4,'less water'),(2,5,'more spicy'),(3,
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Search`
+--
+
+DROP TABLE IF EXISTS `Search`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Search` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int(11) unsigned NOT NULL,
+  `keyword` varchar(30) NOT NULL,
+  `stime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `uid` (`uid`),
+  CONSTRAINT `uid_Search_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Search`
+--
+
+LOCK TABLES `Search` WRITE;
+/*!40000 ALTER TABLE `Search` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Search` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Tag`
 --
 
@@ -450,6 +506,34 @@ LOCK TABLES `Tag` WRITE;
 /*!40000 ALTER TABLE `Tag` DISABLE KEYS */;
 INSERT INTO `Tag` VALUES (1,'italian'),(2,'chinese'),(3,'vegan'),(4,'soup'),(5,'spicy'),(6,'cake');
 /*!40000 ALTER TABLE `Tag` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Tag_Click`
+--
+
+DROP TABLE IF EXISTS `Tag_Click`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Tag_Click` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `tid` int(11) unsigned NOT NULL,
+  `uid` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tid` (`tid`),
+  KEY `uid` (`uid`),
+  CONSTRAINT `tid_TC_Tag` FOREIGN KEY (`tid`) REFERENCES `Tag` (`tid`),
+  CONSTRAINT `uid_TC_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Tag_Click`
+--
+
+LOCK TABLES `Tag_Click` WRITE;
+/*!40000 ALTER TABLE `Tag_Click` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Tag_Click` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -513,4 +597,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-18 19:31:04
+-- Dump completed on 2016-11-27 15:30:21

@@ -1,0 +1,15 @@
+"nomogram" website deployment document:
+
+cut and paste the contents of the "program" folder into your "RemoteR" folder.
+
+------------------------    Configurations   ------------------------
+The “program/nomogram.inc” file is for configuring the database connection,
+needs to be put into “../dbincloc/” folder relative to root folder of “nomogram”.
+
+---------------------------------------------------------------------
+
+-------------------------------   R library  --------------------------
+Make sure these R libraries are installed
+
+survival, plotrix, grid
+------------------------------------------------------------------------

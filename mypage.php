@@ -1,9 +1,11 @@
 <?php
-//session_start();
-//
-//if (!isset($_SESSION['uid'])) {
-//    header("Location: login.php");
-//}
+session_start();
+
+$_SESSION['uid'] = 2;
+
+if (!isset($_SESSION['uid'])) {
+    header("Location: login.php");
+}
 
 ?>
 

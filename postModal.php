@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['uid'])) {
+    header("Location: login.php");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,8 +85,7 @@
                                                         <input type="text" name="ingredients[]" required>
                                                         <label for="unit[]">Unit</label>
                                                         <select id="unit[]" name="unit[]">
-                                                            <option ng-repeat="x in unit_records">{{ x.unit_name }}
-                                                            </option>
+                                                            <option ng-repeat="x in unit_records" value="{{ x.unit_name }}">{{ x.unit_name }}</option>
                                                         </select>
                                                         <label for="amount[]">Amount</label>
                                                         <input type="number" class="form-inline" id="amount[]" name="amount[]"
@@ -199,7 +205,7 @@ $db->close();
 
         var s = '<div><input type="text" name="ingredients[]" required>\n<label for="unit">Unit</label>\n<select id="unit[]" name="unit[]">';
         for (var i = 0; i < unit_records.length; i++) {
-            s += '<option>' + unit_records[i].unit_name + '</option>';
+            s += '<option value="'+ unit_records[i].unit_name + '">' + unit_records[i].unit_name + '</option>';
         }
         s += '</select>\n<label for="amount[]">Amount</label>\n<input type="number" class="form-inline" id="amount[]" name="amount[]" required><a href="#" class="remove_field">Remove</a></div>';
 

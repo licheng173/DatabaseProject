@@ -33,15 +33,7 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
-                        class="glyphicon glyphicon-user"></i> Sign out &nbsp</a>
-                <ul class="dropdown-menu">
-                    <li><a href="">More</a></li>
-                    <li><a href="">More</a></li>
-                    <li><a href="">More</a></li>
-                    <li><a href="">More</a></li>
-                    <li><a href="">More</a></li>
-                </ul>
+                <a href="signout.php"><i class="glyphicon glyphicon-user"></i> Sign out &nbsp</a>
             </li>
         </ul>
     </nav>

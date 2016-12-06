@@ -1,5 +1,5 @@
 <?php
-include "dbconfig.inc";
+include "../dbconfig.inc";
 
 //open the database connection
 $db = new mysqli($hostname, $usr, $pwd, $dbname);

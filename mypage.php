@@ -1,12 +1,8 @@
 <?php
 session_start();
-
-$_SESSION['uid'] = 2;
-
 if (!isset($_SESSION['uid'])) {
     header("Location: login.php");
 }
-
 ?>
 
 
@@ -161,13 +157,11 @@ if (!isset($_SESSION['uid'])) {
     </div>
 </div>
 
-
-
 <?php
 
-include "dbconf.inc";
+include "../dbconf.inc";
 
-$uid = 2;
+$uid = $_SESSION['uid'];
 
 $json = array();
 

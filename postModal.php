@@ -150,7 +150,7 @@ if (!isset($_SESSION['uid'])) {
 </div>
 
 <?php
-include "dbconf.inc";
+include "../dbconf.inc";
 
 $json = array();
 

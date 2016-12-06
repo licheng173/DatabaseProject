@@ -17,7 +17,7 @@ if (isset($_FILES['photo']['tmp_name'])) {
     $files = $_FILES['photo']['tmp_name'];
 
 }
-include "dbconf.inc";
+include "../dbconf.inc";
 
 $db = new mysqli($hostname, $usr, $pwd, $dbname);
 if ($db->connect_error) {

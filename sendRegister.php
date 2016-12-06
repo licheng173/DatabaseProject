@@ -1,6 +1,6 @@
 <?php
 
-include "dbconf.inc";
+include "../dbconf.inc";
 
 
 $db=new mysqli($hostname, $usr, $pwd, $dbname);

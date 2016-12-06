@@ -1,6 +1,6 @@
 <?php
 
-include "dbconf.inc";
+include "../dbconf.inc";
 
 $db = new mysqli($hostname, $usr, $pwd, $dbname);
 if ($db->connect_error) {
@@ -20,15 +20,15 @@ if(isset($_POST['login-submit'])) {
 
 if(!empty($_POST['username']))
 {
-	if ($result = $db->prepare("select uname from User where uname = ? and upassword = ?;")) 
+	if ($result = $db->prepare("select uid from User where uname = ? and upassword = ?;"))
 	{
     	$result->bind_param("ss", $username, $hashed_password);
     	$result->execute();
-    	$result->bind_result($uname);
+    	$result->bind_result($uid);
     	$result->fetch();
     	$result->close();
-    	if(!empty($uname)) {
-			$_SESSION['uname'] = $uname;
+    	if(!empty($uid)) {
+			$_SESSION['uid'] = $uid;
 			echo "<script>location.href='mypage.php'</script>";
 		}
 		else 

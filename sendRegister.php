@@ -32,7 +32,7 @@ if(strcmp($pass, $conpass) != 0) {
    $message = 'Passwords should be same<br>';
 }
 
-$hashed_password = crypt($pass); // this function works only in PHP 5.5 or latest version
+$hashed_password = md5($pass); // this function works only in PHP 5.5 or latest version
  
 $check_uname = $db->query("SELECT uname FROM User WHERE uname='$uname'");
 $count=$check_uname->num_rows;

@@ -12,7 +12,7 @@ $pass = strip_tags($_POST['password']);
 $username = $db->real_escape_string($username);
 $pass = $db->real_escape_string($pass);
 
-$hashed_password = crypt($pass);
+$hashed_password = md5($pass);
 
 
 session_start();

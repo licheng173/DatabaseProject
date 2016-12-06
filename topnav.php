@@ -28,8 +28,7 @@
                 <a href="#"><i class="glyphicon glyphicon-home"></i> Home</a>
             </li>
             <li>
-                <a href="#postModal" role="button" data-toggle="modal"><i
-                        class="glyphicon glyphicon-plus"></i> Post</a>
+                <a href="postModal.php"><i class="glyphicon glyphicon-plus"></i> Post</a>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -46,4 +45,50 @@
             </li>
         </ul>
     </nav>
+</div>
+
+<!--post modal-->
+<div id="postModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                New Post
+            </div>
+            <div class="modal-body">
+                <form class="form center-block">
+                    <div class="form-group">
+                        <label for="rtitle">Title</label>
+                        <input type="text" class="form-control" id="rtitle" name="rtitle">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rserving">Serving</label>
+                        <input type="number" class="form-control" id="rserving" name="rserving">
+                    </div>
+
+                    <div class="input_fields_wrap">
+                        <button class="add_field_button">Add More Fields</button>
+                        <div><input type="text" name="mytext[]"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rdescription">Description</label>
+                        <textarea class="form-control input-lg" autofocus="" id="rdescription" name="rdescription"
+                                  placeholder="What do you want to share?"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div>
+                    <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Post</button>
+                    <ul class="pull-left list-inline">
+                        <li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li>
+                        <li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
+                        <li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

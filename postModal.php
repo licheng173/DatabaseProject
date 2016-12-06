@@ -18,68 +18,6 @@
     <script type="text/javascript" src="js/angular.min.js"></script>
     <!-- script references -->
     <script src="js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" language="javascript" class="init">
-        $(document).ready(function () {
-
-            var max_fields = 10; //maximum input boxes allowed
-
-            var tag_wrapper = $(".input_tags_wrap"); //Fields wrapper
-            var add_tag_button = $(".add_tag_button"); //Add button ID
-
-            var z = 1; //initlal text box count
-            $(add_tag_button).click(function (e) { //on add input button click
-                e.preventDefault();
-                if (y < max_fields) { //max input box allowed
-                    z++; //text box increment
-                    $(tag_wrapper).append('<div><select id="tag[]" name="tag[]"><option>mg</option><option>ounce</option><option>pince</option><option>teaspoon</option></select><a href="#" class="remove_field">Remove</a></div>'); //add input box
-                }
-            });
-
-            $(tag_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-                e.preventDefault();
-                $(this).parent('div').remove();
-                z--;
-            });
-
-
-            var wrapper = $(".input_fields_wrap"); //Fields wrapper
-            var add_button = $(".add_field_button"); //Add button ID
-
-            var x = 1; //initlal text box count
-            $(add_button).click(function (e) { //on add input button click
-                e.preventDefault();
-                if (x < max_fields) { //max input box allowed
-                    x++; //text box increment
-                    $(wrapper).append('<div><input type="text" name="mytext[]" required>\n<label for="unit">Unit</label>\n<select id="unit"><option>mg</option><option>ounce</option><option>pince</option><option>teaspoon</option></select><a href="#" class="remove_field">Remove</a></div>'); //add input box
-                }
-            });
-
-            $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-                e.preventDefault();
-                $(this).parent('div').remove();
-                x--;
-            });
-
-            var photo_wrapper = $(".input_photos_wrap"); //Fields wrapper
-            var add_photo_button = $(".add_photo_button"); //Add button ID
-
-            var y = 1; //initlal text box count
-            $(add_photo_button).click(function (e) { //on add input button click
-                e.preventDefault();
-                if (y < max_fields) { //max input box allowed
-                    y++; //text box increment
-                    $(photo_wrapper).append('<div><input type="file" name="photo[]"><a href="#" class="remove_field">Remove</a></div>'); //add input box
-                }
-            });
-
-            $(photo_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-                e.preventDefault();
-                $(this).parent('div').remove();
-                y--;
-            });
-        });
-    </script>
-
 </head>
 <body ng-app="myApp" ng-controller="myCtrl">
 <div class="wrapper">
@@ -106,25 +44,20 @@
                         <div class="row">
                             <!-- main col right -->
                             <div class="col-sm-12">
-
-
                                 <br/>
                                 <div class="panel panel-default">
                                     <div class="panel-body">
-                                        <form>
-
+                                        <form role="form" method="post" name="recipe_form" action="sendRecipe.php" enctype="multipart/form-data">
                                             <div class="form-group">
                                                 <label for="tag">Tag(s)</label>
-                                                <div class="input_tags_wrap" id="tag" name="tag">
-                                                    <div>
-                                                        <select id="tag[]" name="tag[]">
-                                                            <option ng-repeat="x in records">{{ x.ttitle }}</option>
-                                                        </select>
+                                                <div class="input_tags_wrap" id="tag" name="tag"
+                                                     ng-repeat="x in records">
+                                                    <div class="checkbox">
+                                                        <label><input type="checkbox" value="{{ x.tid }}" name="tag[]">{{
+                                                            x.ttitle }}</label>
                                                     </div>
                                                 </div>
-                                                <button class="add_tag_button btn btn-primary">Add More Tags</button>
                                             </div>
-
 
                                             <div class="form-group">
                                                 <label for="rtitle">Title</label>
@@ -142,12 +75,15 @@
                                                 <label for="ingredient">Ingredient(s)</label>
                                                 <div class="input_fields_wrap" id="ingredient" name="ingredient">
                                                     <div>
-                                                        <input type="text" name="mytext[]" required>
+                                                        <input type="text" name="ingredients[]" required>
                                                         <label for="unit[]">Unit</label>
-                                                        <select id="unit[]" iname="unit[]">
+                                                        <select id="unit[]" name="unit[]">
                                                             <option ng-repeat="x in unit_records">{{ x.unit_name }}
                                                             </option>
                                                         </select>
+                                                        <label for="amount[]">Amount</label>
+                                                        <input type="number" class="form-inline" id="amount[]" name="amount[]"
+                                                               required>
                                                     </div>
                                                 </div>
                                                 <button class="add_field_button btn btn-primary">Add More Ingredients
@@ -160,10 +96,11 @@
                                                           name="rdescription"
                                                           placeholder="What do you want to share?"></textarea>
                                             </div>
+
                                             <div class="form-group">
-                                                <label for="photo">Photo(s)</label>
-                                                <div class="input_photos_wrap" id="photos" name="photos">
-                                                    <div><input type="file" name="photo[]"></div>
+                                                <label for="photos">Photo(s)</label>
+                                                <div class="input_photos_wrap" id="photos">
+                                                    <div><input type="file" id="photo[]" name="photo[]"></div>
                                                 </div>
                                                 <button class="add_photo_button btn btn-primary">Add More Photos
                                                 </button>
@@ -223,6 +160,7 @@ if ($result = $db->prepare("select tid, ttitle from tag;")) {
     $result->bind_result($tid, $ttitle);
 
     while ($result->fetch()) {
+        $json[$tid]["tid"] = $tid;
         $json[$tid]["ttitle"] = $ttitle;
     }
     $result->close();
@@ -239,7 +177,6 @@ if ($result = $db->prepare("select unit_name from unit_conversion;")) {
     }
     $result->close();
 }
-
 $db->close();
 ?>
 
@@ -254,6 +191,42 @@ $db->close();
         $scope.records = <?php echo json_encode(array_values($json)); ?>;
         $scope.unit_records = <?php echo json_encode(array_values($unit_json)); ?>;
     });
+
+    $(document).ready(function () {
+        var wrapper = $(".input_fields_wrap"); //Fields wrapper
+        var add_button = $(".add_field_button"); //Add button ID
+        var unit_records = <?php echo json_encode(array_values($unit_json)); ?>;
+
+        var s = '<div><input type="text" name="ingredients[]" required>\n<label for="unit">Unit</label>\n<select id="unit[]" name="unit[]">';
+        for (var i = 0; i < unit_records.length; i++) {
+            s += '<option>' + unit_records[i].unit_name + '</option>';
+        }
+        s += '</select>\n<label for="amount[]">Amount</label>\n<input type="number" class="form-inline" id="amount[]" name="amount[]" required><a href="#" class="remove_field">Remove</a></div>';
+
+        $(add_button).click(function (e) { //on add input button click
+            e.preventDefault();
+            $(wrapper).append(s); //add input box
+        });
+
+        $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+            e.preventDefault();
+            $(this).parent('div').remove();
+        });
+
+        var photo_wrapper = $(".input_photos_wrap"); //Fields wrapper
+        var add_photo_button = $(".add_photo_button"); //Add button ID
+
+        $(add_photo_button).click(function (e) { //on add input button click
+            e.preventDefault();
+            $(photo_wrapper).append('<div><input type="file" id="photo[]" name="photo[]"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        });
+
+        $(photo_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+            e.preventDefault();
+            $(this).parent('div').remove();
+        });
+    });
+
 </script>
 </body>
 </html>

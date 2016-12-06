@@ -259,6 +259,41 @@
     	<div class="row">
 			<div class="col-md-6 col-md-offset-3">
 				<div class="panel panel-login">
+
+				<?php
+				if ( isset($_GET['er']) ) {    
+    			?>
+   			 	<div class="form-group">
+ 					<div class="alert alert-<?php echo "warning"; ?>">
+    				<span class="glyphicon glyphicon-info-sign"></span> <?php echo "Incorrect Credentials, Try again..."; ?>
+                	</div>
+             	</div>
+                	<?php
+   				}
+   				?>
+
+   				<?php
+				if ( isset($_GET['errMsg']) ) {    
+    			?>
+   			 	<div class="form-group">
+ 					<div class="alert alert-<?php echo "success"; ?>">
+    				<span class="glyphicon glyphicon-info-sign"></span> <?php echo $_GET['errMsg']; ?>
+                	</div>
+             	</div>
+                	<?php
+   				}
+   				?>
+   				<?php
+   				if ( isset($_GET['msg']) ) {    
+    			?>
+   			 	<div class="form-group">
+ 					<div class="alert alert-<?php echo "warning"; ?>">
+    				<span class="glyphicon glyphicon-info-sign"></span> <?php echo $_GET['msg']; ?>
+                	</div>
+             	</div>
+                	<?php
+   				}
+   				?>
 					<div class="panel-heading">
 						<div class="row">
 							<div class="col-xs-6">
@@ -277,13 +312,6 @@
 									<div class="form-group">
 										<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
 									</div>
-
-									<?php
-									$error = $_GET['er'];
-									if ($error == 1) {
-										echo "<p><red>Wrong</red></p>";
-									}
-									?>
 
 									<div class="form-group">
 										<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">

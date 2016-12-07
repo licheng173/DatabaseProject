@@ -25,7 +25,7 @@
                 <a href="mypage.php"><i class="glyphicon glyphicon-home"></i> My Page</a>
             </li>
             <li>
-                <a href="#"><i class="glyphicon glyphicon-home"></i> Home</a>
+                <a href="home.php"><i class="glyphicon glyphicon-home"></i> Home</a>
             </li>
             <li>
                 <a href="postModal.php"><i class="glyphicon glyphicon-plus"></i> Post</a>

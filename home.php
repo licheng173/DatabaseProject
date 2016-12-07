@@ -64,34 +64,6 @@ if (!isset($_SESSION['uid'])) {
                                     </div>
                                 </a>
                             </div>
-                            <!--                            <div class="col-sm-4">-->
-                            <!--                                <div class="panel panel-default">-->
-                            <!--                                    <div class="panel-body">-->
-                            <!--                                        <p><a href="#"><img src="images/714402.jpg" style="width: 100%;"></a></p>-->
-                            <!--                                        <div class="clearfix"></div>-->
-                            <!--                                        <hr>-->
-                            <!--                                        Design, build, test, and prototype using Bootstrap in real-time from your-->
-                            <!--                                        Web-->
-                            <!--                                        browser. Bootply combines the power of hand-coded HTML, CSS and JavaScript-->
-                            <!--                                        with-->
-                            <!--                                        the benefits of responsive design using Bootstrap. Find and showcase-->
-                            <!--                                        Bootstrap-ready snippets in the 100% free Bootply.com code repository.-->
-                            <!---->
-                            <!--                                        <div class="grid-col__ratings">-->
-                            <!--                                            <div class="rating-stars" data-scroll-to-anchor="reviews"-->
-                            <!--                                                 data-ratingstars="3.85999989509583">-->
-                            <!--                                                <img height="16" width="16" src="images/full-star.svg">-->
-                            <!--                                                <img height="16" width="16" src="images/full-star.svg">-->
-                            <!--                                                <img height="16" width="16" src="images/full-star.svg">-->
-                            <!--                                                <img height="16" width="16" src="images/full-star.svg">-->
-                            <!--                                                <img height="16" width="16" src="images/empty-star.svg">-->
-                            <!--                                            </div>-->
-                            <!--                                        </div>-->
-                            <!--                                    </div>-->
-                            <!---->
-                            <!--                                </div>-->
-                            <!--                            </div>-->
-
                         </div><!--/row-->
                     </div><!-- /col-9 -->
                 </div><!-- /padding -->
@@ -106,33 +78,26 @@ if (!isset($_SESSION['uid'])) {
 
 include "../dbconf.inc";
 
-$uid = $_SESSION['uid'];
-
 $json = array();
 
-if ($uid != "") {
-    $db = new mysqli($hostname, $usr, $pwd, $dbname);
-    if ($db->connect_error) {
-        die('Unable to connect to database: ' . $db->connect_error);
-    }
+$db = new mysqli($hostname, $usr, $pwd, $dbname);
+if ($db->connect_error) {
+    die('Unable to connect to database: ' . $db->connect_error);
+}
 
 //    $keyword = mysqli_real_escape_strings($db, $keyword);
-
-    if ($result = $db->prepare("select rid, rtitle, rserving, rdescription from recipe where uid = ?;")) {
-        $result->bind_param("i", $uid);
-        $result->execute();
-        $result->bind_result($rid, $rtitle, $rserving, $rdescription);
-
-        while ($result->fetch()) {
-            $json[$rid]["rid"] = $rid;
-            $json[$rid]["rtitle"] = $rtitle;
-            $json[$rid]["rserving"] = $rserving;
-            $json[$rid]["rdescription"] = $rdescription;
-        }
-        $result->close();
+$sql = "select rid, rtitle, rserving, rdescription from recipe;";
+$result = $db->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $rid = $row["rid"];
+        $json[$rid]["rid"] = $row["rid"];
+        $json[$rid]["rtitle"] = $row["rtitle"];
+        $json[$rid]["rserving"] = $row["rserving"];
+        $json[$rid]["rdescription"] = $row["rdescription"];
     }
-    $db->close();
 }
+$db->close();
 ?>
 
 <!-- script references -->

@@ -13,10 +13,6 @@ $units = $_POST['unit'];
 $amounts = $_POST['amount'];
 $rdescription = $_POST['rdescription'];
 
-if (isset($_FILES['photo']['tmp_name'])) {
-    $files = $_FILES['photo']['tmp_name'];
-
-}
 include "../dbconf.inc";
 
 $db = new mysqli($hostname, $usr, $pwd, $dbname);

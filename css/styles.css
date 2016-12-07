@@ -285,3 +285,9 @@ small.text-muted {
     padding-left:3px;
   }
 }
+
+.divider{
+    width:5px;
+    height:auto;
+    display:inline-block;
+}

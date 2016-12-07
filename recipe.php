@@ -6,7 +6,7 @@ if (!isset($_SESSION['uid'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
@@ -36,10 +36,13 @@ if (isset($_GET['rid'])) {
     $rid = $_GET['rid'];
 }
 
+
 $uid = $_SESSION['uid'];
 
 $ingredient_json = array();
+$tag_json = array();
 $json = array();
+$review_json = array();
 
 if ($rid != -1) {
     $db = new mysqli($hostname, $usr, $pwd, $dbname);
@@ -68,6 +71,17 @@ if ($rid != -1) {
         $result->close();
     }
 
+    if ($result = $db->prepare("select tid, ttitle from tag natural join recipe_tag where rid = ?;")) {
+        $result->bind_param("s", $rid);
+        $result->execute();
+        $result->bind_result($tid, $ttitle);
+        while ($result->fetch()) {
+            $tag_json[$tid]["tid"] = $tid;
+            $tag_json[$tid]["ttitle"] = $ttitle;
+        }
+        $result->close();
+    }
+
     if ($result = $db->prepare("select pid from recipe_picture where rid = ?;")) {
         $result->bind_param("s", $rid);
         $result->execute();
@@ -77,10 +91,27 @@ if ($rid != -1) {
         }
         $result->close();
     }
+
+    if ($result = $db->prepare("select r_id, uid, uname, rrate, rtext, rvtitle from review natural join user where rid = ?;")) {
+        $result->bind_param("s", $rid);
+        $result->execute();
+        $result->bind_result($r_id, $r_uid, $r_uname, $rrate, $rtext, $rvtitle);
+        while ($result->fetch()) {
+            $review_json[$r_id]["r_id"] = $r_id;
+            $review_json[$r_id]["r_uid"] = $r_uid;
+            $review_json[$r_id]["r_uname"] = $r_uname;
+            $review_json[$r_id]["rrate"] = $rrate;
+            $review_json[$r_id]["rtext"] = $rtext;
+            $review_json[$r_id]["rvtitle"] = $rvtitle;
+            $review_json[$r_id]["photo"] = array();
+            $review_json[$r_id]["suggestion"] = array();
+        }
+
+        $result->close();
+    }
     $db->close();
 }
 ?>
-
 <div class="wrapper">
     <div class="box">
         <div class="row row-offcanvas row-offcanvas-left">
@@ -101,6 +132,12 @@ if ($rid != -1) {
 
                 <div class="padding">
                     <div class="full col-sm-9">
+
+                        <a ng-repeat="x in tag_records" href="tagSpecific.php?tid={{ x.tid }}">
+                            <button type="button" class="btn btn-success">{{ x.ttitle }}</button>
+                        </a>
+                        </br></br>
+
                         <div class="panel panel-default">
                             <p><?php echo $rtitle ?></p>
                         </div>
@@ -128,21 +165,86 @@ if ($rid != -1) {
                                 </div>
                             </div>
                         </div><!--/row-->
+                    </div>
 
-                        
+                    <div class="full col-sm-9">
 
+                        <h2>Reviews</h2>
 
+                        <div class="panel panel-default" ng-repeat="x in review_records">
+                            <a href="review.php?r_id={{ x.r_id }}">
+                                <div class="panel-body">
+                                    <p>{{ x.rvtitle }}</p>
+                                    <p>{{ x.rtext }}</p>
+                                    <img src="images/star{{ x.rrate }}.svg" style="height: 20px;">
+                                    <p>{{ x.r_uname }}</p>
+                                </div>
+                            </a>
+                        </div>
 
+                        <!--new review-->
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <h3>New Review</h3>
+                                <hr>
+                                <form role="form" method="post" name="review_form" action="sendReview.php"
+                                      enctype="multipart/form-data">
 
+                                    <input type="hidden" id="rid" name="rid" value="<?php echo $rid; ?>">
+                                    <div class="form-group">
+                                        <label for="rvtitle">Title</label>
+                                        <input type="text" class="form-control" id="rvtitle" name="rvtitle"
+                                               required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="rtext">Review Detail</label>
+                                        <textarea class="form-control input-lg" id="rtext" name="rtext"
+                                                  placeholder="What's your opinion?"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="rrate">Rating</label>
+                                        <select id="rrate" name="rrate">
+                                            <option>1</option>
+                                            <option>2</option>
+                                            <option>3</option>
+                                            <option>4</option>
+                                            <option>5</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="photos">Photo(s)</label>
+                                        <div class="input_photos_wrap" id="photos">
+                                            <div><input type="file" id="photo[]" name="photo[]"></div>
+                                        </div>
+                                        </br>
+                                        <button class="add_photo_button btn btn-primary">Add More Photos
+                                        </button>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="suggestions">Suggestion(s)</label>
+                                        <div class="input_suggestions_wrap" id="suggestions">
+                                        </div>
+                                        </br>
+                                        <button class="add_suggestion_button btn btn-primary">Add More Suggestions
+                                        </button>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    </br></br>
+                                </form>
+                            </div>
+                        </div>
+                        </br></br>
                     </div><!-- /col-9 -->
                 </div><!-- /padding -->
             </div>
             <!-- /main -->
-
         </div>
     </div>
 </div>
-
 
 <!-- script references -->
 <script src="js/jquery-3.1.1.min.js"></script>
@@ -156,9 +258,41 @@ if ($rid != -1) {
     var app = angular.module("myApp", []);
     app.controller("myCtrl", function ($scope) {
         $scope.records = <?php echo json_encode(array_values($json)); ?>;
-        $scope.ingredient_records = <?php echo json_encode(array_values($ingredient_json)); ?>
+        $scope.ingredient_records = <?php echo json_encode(array_values($ingredient_json)); ?>;
+        $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
+        $scope.review_records = <?php echo json_encode(array_values($review_json)); ?>;
+    });
+
+
+    $(document).ready(function () {
+        var photo_wrapper = $(".input_photos_wrap"); //Fields wrapper
+        var add_photo_button = $(".add_photo_button"); //Add button ID
+
+        $(add_photo_button).click(function (e) { //on add input button click
+            e.preventDefault();
+            $(photo_wrapper).append('<div><input type="file" id="photo[]" name="photo[]"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        });
+
+        $(photo_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+            e.preventDefault();
+            $(this).parent('div').remove();
+        });
+
+        var suggestion_wrapper = $(".input_suggestions_wrap"); //Fields wrapper
+        var add_suggestion_button = $(".add_suggestion_button"); //Add button ID
+
+        $(add_suggestion_button).click(function (e) { //on add input button click
+            e.preventDefault();
+            $(suggestion_wrapper).append('<div><textarea class="form-control input-lg" id="suggestion[]" name="suggestion[]"></textarea><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        });
+
+        $(suggestion_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+            e.preventDefault();
+            $(this).parent('div').remove();
+        });
     });
 </script>
 </body>
 </html>
+
 

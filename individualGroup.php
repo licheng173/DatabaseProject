@@ -25,6 +25,30 @@ if (!isset($_SESSION['uid'])) {
     <script type="text/javascript" src="js/angular.min.js"></script>
 </head>
 <body>
+<?php
+include "../dbconf.inc";
+
+$uid = $_SESSION['uid'];
+$gid = $_GET['gid'];
+$mygroup_json = array();
+$allgroup_json = array();
+
+if ($gid != "") {
+    $db = new mysqli($hostname, $usr, $pwd, $dbname);
+    if ($db->connect_error) {
+        die('Unable to connect to database: ' . $db->connect_error);
+    }
+
+    if ($result = $db->prepare("select gname, gdescription from ggroup where gid = ?;")) {
+        $result->bind_param("i", $gid);
+        $result->execute();
+        $result->bind_result($gname, $gdescription);
+        $result->fetch();
+        $result->close();
+    }
+    $db->close();
+}
+?>
 <div class="wrapper">
     <div class="box">
         <div class="row row-offcanvas row-offcanvas-left">
@@ -44,76 +68,39 @@ if (!isset($_SESSION['uid'])) {
                 ?>
 
                 <div class="padding">
-                    <div class="full col-sm-9">
+                    <div class="full col-sm-9" ng-app="myApp" ng-controller="myCtrl">
                         <!-- content -->
-                        <div class="row" ng-app="myApp" ng-controller="myCtrl">
+                        <div class="row">
                             <!-- main col right -->
-                            <div class="col-sm-4" ng-repeat="x in records">
-                                <a href="recipe.php?rid={{ x.rid }}">
-                                    <div class="panel panel-default">
-                                        <div class="panel-body">
-                                            <img src="imgShow.php?rid={{ x.rid }}" style="width: 100%;">
-                                            <hr>
-                                            <div class="panel-body">
-                                                <p>{{ x.rtitle }}</p>
-                                                <p>{{ x.rserving }}</p>
-                                                <p>{{ x.rdescription }}</p>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </a>
+                            <div class="col-sm-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><h4><?php echo $gname; ?></h4></div>
+                                    <div class="panel-body"><?php echo $gdescription; ?></div>
+                                </div>
                             </div>
-                        </div><!--/row-->
-                    </div><!-- /col-9 -->
-                </div><!-- /padding -->
-            </div>
-            <!-- /main -->
-
+                        </div>
+                    </div><!--/row-->
+                </div><!-- /col-9 -->
+            </div><!-- /padding -->
         </div>
+        <!-- /main -->
+
     </div>
 </div>
-
-<?php
-
-include "../dbconf.inc";
-
-$json = array();
-
-$db = new mysqli($hostname, $usr, $pwd, $dbname);
-if ($db->connect_error) {
-    die('Unable to connect to database: ' . $db->connect_error);
-}
-
-$sql = "select rid, rtitle, rserving, rdescription from recipe;";
-$result = $db->query($sql);
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $rid = $row["rid"];
-        $json[$rid]["rid"] = $row["rid"];
-        $json[$rid]["rtitle"] = $row["rtitle"];
-        $json[$rid]["rserving"] = $row["rserving"];
-        $json[$rid]["rdescription"] = $row["rdescription"];
-    }
-}
-$result->close();
-$db->close();
-?>
-
 <!-- script references -->
 <script src="js/jquery-3.1.1.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
-
 <script src="js/scripts.js"></script>
 <script type="text/javascript" language="javascript" class="init">
     var app = angular.module("myApp", []);
     app.controller("myCtrl", function ($scope) {
-        $scope.records = <?php echo json_encode(array_values($json)); ?>;
+        $scope.mygroup_records = <?php echo json_encode(array_values($mygroup_json)); ?>;
+        $scope.allgroup_records = <?php echo json_encode(array_values($allgroup_json)); ?>;
     });
 </script>
+
 </body>
 </html>
-

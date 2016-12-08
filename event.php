@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['uid'])) {
+    header("Location: login.php");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,8 +22,76 @@
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <link href="css/styles.css" rel="stylesheet">
+    <script type="text/javascript" src="js/angular.min.js"></script>
 </head>
 <body>
+<?php
+include "../dbconf.inc";
+
+$uid = $_SESSION['uid'];
+
+$myevent_json = array();
+$allevent_json = array();
+$mygroup_json = array();
+
+if ($uid != "") {
+    $db = new mysqli($hostname, $usr, $pwd, $dbname);
+    if ($db->connect_error) {
+        die('Unable to connect to database: ' . $db->connect_error);
+    }
+
+    if ($result = $db->prepare("select eid, gid, gname, etime, elocation, edescription, ecuid, etitle from reserve natural join event natural join ggroup where uid = ?;")) {
+        $result->bind_param("i", $uid);
+        $result->execute();
+        $result->bind_result($eid, $gid, $gname, $etime, $elocation, $edescription, $ecuid, $etitle);
+
+        while ($result->fetch()) {
+            $myevent_json[$eid]["eid"] = $eid;
+            $myevent_json[$eid]["gid"] = $gid;
+            $myevent_json[$eid]["gname"] = $gname;
+            $myevent_json[$eid]["etime"] = $etime;
+            $myevent_json[$eid]["elocation"] = $elocation;
+            $myevent_json[$eid]["edescription"] = $edescription;
+            $myevent_json[$eid]["ecuid"] = $ecuid;
+            $myevent_json[$eid]["etitle"] = $etitle;
+        }
+        $result->close();
+    }
+
+    if ($result = $db->prepare("select eid, gid, gname, etime, elocation, edescription, ecuid, etitle from event natural join ggroup natural join join_group where uid = ? and eid not in(select eid from reserve natural join event natural join ggroup where uid = ?);")) {
+        $result->bind_param("ii", $uid, $uid);
+        $result->execute();
+        $result->bind_result($eid, $gid, $gname, $etime, $elocation, $edescription, $ecuid, $etitle);
+
+        while ($result->fetch()) {
+            $allevent_json[$eid]["eid"] = $eid;
+            $allevent_json[$eid]["gid"] = $gid;
+            $allevent_json[$eid]["gname"] = $gname;
+            $allevent_json[$eid]["etime"] = $etime;
+            $allevent_json[$eid]["elocation"] = $elocation;
+            $allevent_json[$eid]["edescription"] = $edescription;
+            $allevent_json[$eid]["ecuid"] = $ecuid;
+            $allevent_json[$eid]["etitle"] = $etitle;
+        }
+        $result->close();
+    }
+
+
+
+    if ($result = $db->prepare("select gid, gname from join_group natural join ggroup where uid = ?;")) {
+        $result->bind_param("i", $uid);
+        $result->execute();
+        $result->bind_result($gid, $gname);
+
+        while ($result->fetch()) {
+            $mygroup_json[$gid]["gid"] = $gid;
+            $mygroup_json[$gid]["gname"] = $gname;
+        }
+        $result->close();
+    }
+    $db->close();
+}
+?>
 <div class="wrapper">
     <div class="box">
         <div class="row row-offcanvas row-offcanvas-left">
@@ -36,82 +111,42 @@
                 ?>
 
                 <div class="padding">
-                    <div class="full col-sm-9">
+                    <div class="full col-sm-9" ng-app="myApp" ng-controller="myCtrl">
                         <!-- content -->
                         <div class="row">
                             <!-- main col right -->
                             <div class="col-sm-12">
 
                                 <ul class="nav nav-tabs col-xs-12 col-sm-12 col-md-10">
-                                    <li class="active"><a data-toggle="pill" href="#upcoming">Upcoming events</a></li>
-                                    <li><a data-toggle="pill" href="#past">Past events</a></li>
+                                    <li class="active"><a data-toggle="pill" href="#myevent">My Events</a></li>
+                                    <li><a data-toggle="pill" href="#discover">Discover</a></li>
                                     <li><a data-toggle="pill" href="#create">Create a event</a></li>
                                 </ul>
 
                                 <div class="tab-content col-xs-12 col-sm-12 col-md-12">
-                                    <div id="upcoming" class="tab-pane fade in active">
+                                    <div id="myevent" class="tab-pane fade in active">
                                         <br/>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>
-                                                    Bootply Editor &amp; Code Library</h4></div>
+                                        <div class="panel panel-default" ng-repeat="x in myevent_records">
+                                            <div class="panel-heading"><a href="individualEvent.php?eid={{ x.eid }}"><h4>{{ x.etitle }}</h4></a></div>
                                             <div class="panel-body">
-                                                <p><img src="//placehold.it/150x150" class="img-circle pull-right"> <a
-                                                        href="#">The Bootstrap Playground</a></p>
-                                                <div class="clearfix"></div>
-                                                <hr>
-                                                Design, build, test, and prototype using Bootstrap in real-time from
-                                                your Web browser. Bootply combines the power of hand-coded HTML, CSS and
-                                                JavaScript with the benefits of responsive design using Bootstrap. Find
-                                                and showcase Bootstrap-ready snippets in the 100% free Bootply.com code
-                                                repository.
-                                            </div>
-                                        </div>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>
-                                                    Bootply Editor &amp; Code Library</h4></div>
-                                            <div class="panel-body">
-                                                <p><img src="//placehold.it/150x150" class="img-circle pull-right"> <a
-                                                        href="#">The Bootstrap Playground</a></p>
-                                                <div class="clearfix"></div>
-                                                <hr>
-                                                Design, build, test, and prototype using Bootstrap in real-time from
-                                                your Web browser. Bootply combines the power of hand-coded HTML, CSS and
-                                                JavaScript with the benefits of responsive design using Bootstrap. Find
-                                                and showcase Bootstrap-ready snippets in the 100% free Bootply.com code
-                                                repository.
+                                                <p>Group: {{ x.gname }}</p>
+                                                <p>Location: {{ x.elocation }}</p>
+                                                <p>Detail: {{ x.edescription }}</p>
+                                                <p>Time: {{ x.etime }}</p>
+                                                <a href="cancelReservation.php?eid={{ x.eid }}"><button type="submit" class="btn btn-primary">Cancel Reservation</button></a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="past" class="tab-pane fade">
+                                    <div id="discover" class="tab-pane fade">
                                         <br/>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>
-                                                    Bootply Editor &amp; Code Library</h4></div>
+                                        <div class="panel panel-default" ng-repeat="x in allevent_records">
+                                            <div class="panel-heading"><a href="individualEvent.php?eid={{ x.eid }}"><h4>{{ x.etitle }}</h4></a></div>
                                             <div class="panel-body">
-                                                <p><img src="//placehold.it/150x150" class="img-circle pull-right"> <a
-                                                        href="#">The Bootstrap Playground</a></p>
-                                                <div class="clearfix"></div>
-                                                <hr>
-                                                Design, build, test, and prototype using Bootstrap in real-time from
-                                                your Web browser. Bootply combines the power of hand-coded HTML, CSS and
-                                                JavaScript with the benefits of responsive design using Bootstrap. Find
-                                                and showcase Bootstrap-ready snippets in the 100% free Bootply.com code
-                                                repository.
-                                            </div>
-                                        </div>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading"><a href="#" class="pull-right">View all</a> <h4>
-                                                    Bootply Editor &amp; Code Library</h4></div>
-                                            <div class="panel-body">
-                                                <p><img src="//placehold.it/150x150" class="img-circle pull-right"> <a
-                                                        href="#">The Bootstrap Playground</a></p>
-                                                <div class="clearfix"></div>
-                                                <hr>
-                                                Design, build, test, and prototype using Bootstrap in real-time from
-                                                your Web browser. Bootply combines the power of hand-coded HTML, CSS and
-                                                JavaScript with the benefits of responsive design using Bootstrap. Find
-                                                and showcase Bootstrap-ready snippets in the 100% free Bootply.com code
-                                                repository.
+                                                <p>Group: {{ x.gname }}</p>
+                                                <p>Location: {{ x.elocation }}</p>
+                                                <p>Detail: {{ x.edescription }}</p>
+                                                <p>Time: {{ x.etime }}</p>
+                                                <a href="reserveEvent.php?eid={{ x.eid }}"><button type="submit" class="btn btn-primary">Reserve</button></a>
                                             </div>
                                         </div>
                                     </div>
@@ -119,92 +154,37 @@
                                         <br/>
                                         <div class="panel panel-default">
                                             <div class="panel-body">
-                                                <form>
+                                                <form method="post" name="event_form" action="createEvent.php"
+                                                      enctype="multipart/form-data">
                                                     <div class="form-group">
-                                                        <label for="exampleInputEmail1">Email address</label>
-                                                        <input type="email" class="form-control" id="exampleInputEmail1"
-                                                               aria-describedby="emailHelp" placeholder="Enter email">
-                                                        <small id="emailHelp" class="form-text text-muted">We'll never
-                                                            share your email with anyone else.
-                                                        </small>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="exampleInputPassword1">Password</label>
-                                                        <input type="password" class="form-control"
-                                                               id="exampleInputPassword1" placeholder="Password">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="exampleSelect1">Example select</label>
-                                                        <select class="form-control" id="exampleSelect1">
-                                                            <option>1</option>
-                                                            <option>2</option>
-                                                            <option>3</option>
-                                                            <option>4</option>
-                                                            <option>5</option>
+                                                        <label for="gid">Group</label>
+                                                        <select id="gid" name="gid" required>
+                                                            <option ng-repeat="x in mygroup_records"
+                                                                    value="{{ x.gid }}">{{ x.gname }}
+                                                            </option>
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="exampleSelect2">Example multiple select</label>
-                                                        <select multiple class="form-control" id="exampleSelect2">
-                                                            <option>1</option>
-                                                            <option>2</option>
-                                                            <option>3</option>
-                                                            <option>4</option>
-                                                            <option>5</option>
-                                                        </select>
+                                                        <label for="etitle">Title</label>
+                                                        <input type="text" class="form-control" id="etitle"
+                                                               name="etitle" required="">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="exampleTextarea">Example textarea</label>
-                                                        <textarea class="form-control" id="exampleTextarea"
-                                                                  rows="3"></textarea>
+                                                        <label for="elocation">Location</label>
+                                                        <input type="text" class="form-control" id="elocation"
+                                                               name="elocation" required="">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="exampleInputFile">File input</label>
-                                                        <input type="file" class="form-control-file"
-                                                               id="exampleInputFile" aria-describedby="fileHelp">
-                                                        <small id="fileHelp" class="form-text text-muted">This is some
-                                                            placeholder block-level help text for the above input. It's
-                                                            a bit lighter and easily wraps to a new line.
-                                                        </small>
+                                                        <label for="edescription">Description</label>
+                                                        <textarea class="form-control input-lg" id="edescription"
+                                                                  name="edescription"></textarea>
                                                     </div>
-                                                    <fieldset class="form-group">
-                                                        <legend>Radio buttons</legend>
-                                                        <div class="form-check">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input"
-                                                                       name="optionsRadios" id="optionsRadios1"
-                                                                       value="option1" checked>
-                                                                Option one is this and that&mdash;be sure to include why
-                                                                it's great
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input"
-                                                                       name="optionsRadios" id="optionsRadios2"
-                                                                       value="option2">
-                                                                Option two can be something else and selecting it will
-                                                                deselect option one
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check disabled">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input"
-                                                                       name="optionsRadios" id="optionsRadios3"
-                                                                       value="option3" disabled>
-                                                                Option three is disabled
-                                                            </label>
-                                                        </div>
-                                                    </fieldset>
-                                                    <div class="form-check">
-                                                        <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input">
-                                                            Check me out
-                                                        </label>
+                                                    <div class="form-group">
+                                                        <label for="etime">Time</label>
+                                                        <input type="datetime-local" id="etime" name="etime" required>
                                                     </div>
-                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                    <button type="submit" class="btn btn-primary">Create</button>
                                                 </form>
-
                                             </div>
                                         </div>
                                     </div>
@@ -212,64 +192,10 @@
                             </div>
                         </div>
                     </div><!--/row-->
-
-                    <div class="row" id="footer">
-                        <div class="col-sm-6">
-
-                        </div>
-                        <div class="col-sm-6">
-                            <p>
-                                <a href="#" class="pull-right">©Copyright 2013</a>
-                            </p>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <h4 class="text-center">
-                        <a href="http://bootply.com/96266" target="ext">Download this Template @Bootply</a>
-                    </h4>
-
-                    <hr>
-
-
                 </div><!-- /col-9 -->
             </div><!-- /padding -->
         </div>
         <!-- /main -->
-
-    </div>
-</div>
-</div>
-
-
-<!--post modal-->
-<div id="postModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                Update Status
-            </div>
-            <div class="modal-body">
-                <form class="form center-block">
-                    <div class="form-group">
-                        <textarea class="form-control input-lg" autofocus=""
-                                  placeholder="What do you want to share?"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <div>
-                    <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Post</button>
-                    <ul class="pull-left list-inline">
-                        <li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li>
-                        <li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
-                        <li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 <!-- script references -->
@@ -278,7 +204,15 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
-
 <script src="js/scripts.js"></script>
+<script type="text/javascript" language="javascript" class="init">
+    var app = angular.module("myApp", []);
+    app.controller("myCtrl", function ($scope) {
+        $scope.mygroup_records = <?php echo json_encode(array_values($mygroup_json)); ?>;
+        $scope.allevent_records = <?php echo json_encode(array_values($allevent_json)); ?>;
+        $scope.myevent_records = <?php echo json_encode(array_values($myevent_json)); ?>;
+    });
+</script>
+
 </body>
 </html>

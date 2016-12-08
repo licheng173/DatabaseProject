@@ -10,13 +10,7 @@
         </li>
         <li><a href="group.php"><i class="glyphicon glyphicon-list"></i> Groups</a></li>
         <li><a href="event.php"><i class="glyphicon glyphicon-paperclip"></i> Events</a></li>
-        <li><a href="#"><i class="glyphicon glyphicon-refresh"></i> Refresh</a></li>
-    </ul>
-    <ul class="list-unstyled hidden-xs" id="sidebar-footer">
-        <li>
-            <a href="http://www.bootply.com"><h3>Bootstrap</h3> <i
-                    class="glyphicon glyphicon-heart-empty"></i> Bootply</a>
-        </li>
+<!--        <li><a href="#"><i class="glyphicon glyphicon-refresh"></i> Refresh</a></li>-->
     </ul>
 
     <!-- tiny only nav-->

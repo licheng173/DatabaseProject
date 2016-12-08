@@ -48,10 +48,10 @@ if ($r_id != -1) {
         die('Unable to connect to database: ' . $db->connect_error);
     }
 
-    if ($result = $db->prepare("select rvtitle, rrate, rtext, uname from review natural join user where r_id = ?;")) {
+    if ($result = $db->prepare("select rvtitle, rrate, rtext, uname, uid from review natural join user where r_id = ?;")) {
         $result->bind_param("s", $r_id);
         $result->execute();
-        $result->bind_result($rvtitle, $rrate, $rtext, $uname);
+        $result->bind_result($rvtitle, $rrate, $rtext, $uname, $review_uid);
         $result->fetch();
         $result->close();
     }
@@ -102,23 +102,22 @@ if ($r_id != -1) {
                     <div class="full col-sm-9">
 
                         <div class="panel panel-default">
-                            <p><?php echo $rvtitle; ?></p>
+                            <div class="panel-heading">
+                                <h4><?php echo $rvtitle; ?></h4>
+                            </div>
+                            <div class="panel-body">
+                                <p><?php echo $rtext; ?></p>
+                                <img src="images/star<?php echo $rrate; ?>.svg" style="height: 20px;">
+                                </br></br>
+                                <p>Posted by: <?php echo $uname; ?></p>
+                            </div>
                         </div>
 
+                        <h3>Suggestions</h3>
                         <div class="panel panel-default">
-                            <img src="images/star<?php echo $rrate; ?>.svg" style="height: 20px;">
-                        </div>
-
-                        <div class="panel panel-default">
-                            <p><?php echo $rtext; ?></p>
-                        </div>
-
-                        <div class="panel panel-default">
-                            <p><?php echo $uname; ?></p>
-                        </div>
-
-                        <div class="panel panel-default" ng-repeat="x in suggestion_records">
-                            <p>{{ x.scontent }} </p>
+                            <div class="panel-body" ng-repeat="x in suggestion_records">
+                                <p>{{ x.scontent }} </p>
+                            </div>
                         </div>
 
                         <!-- images -->
@@ -132,6 +131,18 @@ if ($r_id != -1) {
                                 </div>
                             </div>
                         </div><!--/row-->
+
+                        </br>
+                        <?php
+                        if ($review_uid == $uid) {
+                            ?>
+                            <a href="deleteReview.php?r_id=<?php echo $r_id; ?>">
+                                <button type="submit" class="btn btn-primary">Delete review</button>
+                            </a>
+                            <?php
+                        };
+                        ?>
+                        </br></br></br></br></br>
                     </div>
                 </div><!-- /padding -->
             </div>

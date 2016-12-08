@@ -4,7 +4,7 @@ if (!isset($_SESSION['uid'])) {
     header("Location: login.php");
 }
 
-$rpid = $_GET['rpid'];
+$r_id = $_GET['r_id'];
 
 include "../dbconf.inc";
 
@@ -13,20 +13,20 @@ if ($db->connect_error) {
     die('Unable to connect to database: ' . $db->connect_error);
 }
 
-if ($result = $db->prepare("select eid from report where id = ?;")) {
-    $result->bind_param("s", $rpid);
+if ($result = $db->prepare("select rid from review where r_id = ?;")) {
+    $result->bind_param("s", $r_id);
     $result->execute();
-    $result->bind_result($eid);
+    $result->bind_result($rid);
     $result->fetch();
     $result->close();
 }
 
-if ($result = $db->prepare("delete from report where id = ?;")) {
-    $result->bind_param("s", $rpid);
+if ($result = $db->prepare("delete from review where r_id = ?;")) {
+    $result->bind_param("s", $r_id);
     $result->execute();
     $result->close();
 }
 $db->close();
-echo "<script>location.href='individualEvent.php?eid=$eid'</script>";
+echo "<script>location.href='recipe.php?rid=$rid'</script>";
 exit();
 ?>

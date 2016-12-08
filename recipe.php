@@ -43,6 +43,7 @@ $ingredient_json = array();
 $tag_json = array();
 $json = array();
 $review_json = array();
+$links_json = array();
 
 if ($rid != -1) {
     $db = new mysqli($hostname, $usr, $pwd, $dbname);
@@ -52,10 +53,10 @@ if ($rid != -1) {
 
 //    $keyword = mysqli_real_escape_strings($db, $keyword);
 
-    if ($result = $db->prepare("select rtitle, rserving, rdescription from recipe where rid = ?;")) {
+    if ($result = $db->prepare("select rtitle, rserving, rdescription, uid from recipe where rid = ?;")) {
         $result->bind_param("s", $rid);
         $result->execute();
-        $result->bind_result($rtitle, $rserving, $rdescription);
+        $result->bind_result($rtitle, $rserving, $rdescription, $recipe_uid);
         $result->fetch();
         $result->close();
     }
@@ -103,12 +104,23 @@ if ($rid != -1) {
             $review_json[$r_id]["rrate"] = $rrate;
             $review_json[$r_id]["rtext"] = $rtext;
             $review_json[$r_id]["rvtitle"] = $rvtitle;
-            $review_json[$r_id]["photo"] = array();
-            $review_json[$r_id]["suggestion"] = array();
         }
 
         $result->close();
     }
+
+    if ($result = $db->prepare("select r.rid, r.rtitle from link_recipe l join recipe r where l.rid = ? and l.rid_link = r.rid;")) {
+        $result->bind_param("s", $rid);
+        $result->execute();
+        $result->bind_result($link_rid, $link_rtitle);
+        while ($result->fetch()) {
+            $links_json[$link_rid]["link_rid"] = $link_rid;
+            $links_json[$link_rid]["link_rtitle"] = $link_rtitle;
+        }
+
+        $result->close();
+    }
+
     $db->close();
 }
 ?>
@@ -139,19 +151,22 @@ if ($rid != -1) {
                         </br></br>
 
                         <div class="panel panel-default">
-                            <p><?php echo $rtitle ?></p>
+                            <div class="panel-heading">
+                                <h3><?php echo $rtitle ?></h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>Serving: <?php echo $rserving ?></p>
+                                <p><?php echo $rdescription ?></p>
+                            </div>
                         </div>
 
                         <div class="panel panel-default">
-                            <p>Serving: <?php echo $rserving ?></p>
-                        </div>
-
-                        <div class="panel panel-default">
-                            <p><?php echo $rdescription ?></p>
-                        </div>
-
-                        <div class="panel panel-default" ng-repeat="x in ingredient_records">
-                            <p>{{ x.iname }} {{ x.iquantity }} g</p>
+                            <div class="panel-heading">
+                                <h3>Ingredients</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p ng-repeat="x in ingredient_records">{{ x.iname }} {{ x.iquantity }} g</p>
+                            </div>
                         </div>
 
                         <!-- images -->
@@ -165,7 +180,37 @@ if ($rid != -1) {
                                 </div>
                             </div>
                         </div><!--/row-->
+
+                        <div class="row">
+                            <h3>Links</h3>
+                            <!-- main col right -->
+                            <div class="col-sm-4" ng-repeat="x in link_records">
+                                <a href="recipe.php?rid={{ x.link_rid }}">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <h4>{{ x.link_rtitle }}</h4>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div><!--/row-->
+
+                        </br></br></br>
+                        <?php
+                        if ($recipe_uid == $uid) {
+                            ?>
+                            <a href="deleteRicpe.php?rid=<?php echo $rid; ?>">
+                                <button type="submit" class="btn btn-primary">Delete recipe</button>
+                            </a>
+                            <?php
+                        };
+                        ?>
+                        <!--add link-->
+                        <a href="addLink.php?rid=<?php echo $rid; ?>">
+                            <button type="submit" class="btn btn-info">Link to my recipe</button>
+                        </a>
                     </div>
+
 
                     <div class="full col-sm-9">
 
@@ -173,14 +218,18 @@ if ($rid != -1) {
 
                         <div class="panel panel-default" ng-repeat="x in review_records">
                             <a href="review.php?r_id={{ x.r_id }}">
+                                <div class="panel-heading">
+                                    <h4>{{ x.rvtitle }}</h4>
+                                </div>
                                 <div class="panel-body">
-                                    <p>{{ x.rvtitle }}</p>
                                     <p>{{ x.rtext }}</p>
                                     <img src="images/star{{ x.rrate }}.svg" style="height: 20px;">
-                                    <p>{{ x.r_uname }}</p>
+                                    </br></br>
+                                    <p>posted by: {{ x.r_uname }}</p>
                                 </div>
                             </a>
                         </div>
+
 
                         <!--new review-->
                         <div class="panel panel-default">
@@ -261,6 +310,7 @@ if ($rid != -1) {
         $scope.ingredient_records = <?php echo json_encode(array_values($ingredient_json)); ?>;
         $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
         $scope.review_records = <?php echo json_encode(array_values($review_json)); ?>;
+        $scope.link_records = <?php echo json_encode(array_values($links_json)); ?>;
     });
 
 

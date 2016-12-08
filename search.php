@@ -24,7 +24,7 @@ if (!isset($_SESSION['uid'])) {
     <link href="css/styles.css" rel="stylesheet">
     <script type="text/javascript" src="js/angular.min.js"></script>
 </head>
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
 <div class="wrapper">
     <div class="box">
         <div class="row row-offcanvas row-offcanvas-left">
@@ -46,7 +46,7 @@ if (!isset($_SESSION['uid'])) {
                 <div class="padding">
                     <div class="full col-sm-9">
                         <!-- content -->
-                        <div class="row" ng-app="myApp" ng-controller="myCtrl">
+                        <div class="row">
                             <!-- main col right -->
                             <div class="col-sm-4" ng-repeat="x in records">
                                 <a href="recipe.php?rid={{ x.rid }}">
@@ -78,26 +78,45 @@ if (!isset($_SESSION['uid'])) {
 
 include "../dbconf.inc";
 
+$uid = $_SESSION['uid'];
+$search = $_POST['search'];
+
 $json = array();
 
-$db = new mysqli($hostname, $usr, $pwd, $dbname);
-if ($db->connect_error) {
-    die('Unable to connect to database: ' . $db->connect_error);
-}
-
-$sql = "select rid, rtitle, rserving, rdescription from recipe;";
-$result = $db->query($sql);
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $rid = $row["rid"];
-        $json[$rid]["rid"] = $row["rid"];
-        $json[$rid]["rtitle"] = $row["rtitle"];
-        $json[$rid]["rserving"] = $row["rserving"];
-        $json[$rid]["rdescription"] = $row["rdescription"];
+if ($search != "") {
+    $db = new mysqli($hostname, $usr, $pwd, $dbname);
+    if ($db->connect_error) {
+        die('Unable to connect to database: ' . $db->connect_error);
     }
+
+    $search = mysqli_real_escape_string($db, $search);
+
+    function clean($string) {
+        $pool = ['%', '&', '<', '>', '*', '$', '#'];
+        foreach ($pool as $c) {
+            $string = str_replace($c, '', $string);
+        }
+        return $string;
+    }
+
+    $search = clean($search);
+    $search = '%' . $search . '%';
+
+    if ($search != "%%" && $result = $db->prepare("select rid, rtitle, rserving, rdescription from recipe where rtitle like ? or rdescription like ?;")) {
+        $result->bind_param("ss", $search, $search);
+        $result->execute();
+        $result->bind_result($rid, $rtitle, $rserving, $rdescription);
+
+        while ($result->fetch()) {
+            $json[$rid]["rid"] = $rid;
+            $json[$rid]["rtitle"] = $rtitle;
+            $json[$rid]["rserving"] = $rserving;
+            $json[$rid]["rdescription"] = $rdescription;
+        }
+        $result->close();
+    }
+    $db->close();
 }
-$result->close();
-$db->close();
 ?>
 
 <!-- script references -->

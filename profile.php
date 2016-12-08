@@ -1,5 +1,12 @@
+<?php
+session_start();
+if (!isset($_SESSION['uid'])) {
+    header("Location: login.php");
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
@@ -15,8 +22,32 @@
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <link href="css/styles.css" rel="stylesheet">
+    <script type="text/javascript" src="js/angular.min.js"></script>
 </head>
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
+
+<?php
+
+include "../dbconf.inc";
+
+$uid = $_SESSION['uid'];
+
+if ($uid != "") {
+    $db = new mysqli($hostname, $usr, $pwd, $dbname);
+    if ($db->connect_error) {
+        die('Unable to connect to database: ' . $db->connect_error);
+    }
+
+    if ($result = $db->prepare("select uname, name, uprofile from user where uid = ?;")) {
+        $result->bind_param("i", $uid);
+        $result->execute();
+        $result->bind_result($uname, $name, $uprofile);
+        $result->fetch();
+        $result->close();
+    }
+    $db->close();
+}
+?>
 <div class="wrapper">
     <div class="box">
         <div class="row row-offcanvas row-offcanvas-left">
@@ -37,165 +68,51 @@
 
                 <div class="padding">
                     <div class="full col-sm-9">
-                        <!-- content -->
-                        <div class="row">
-                            <!-- main col right -->
-                            <div class="col-sm-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <form role="form" method="post" name="profile_form" action="sendProfile.php"
+                                      enctype="multipart/form-data">
 
+                                    <input type="hidden" id="rid" name="uid" value="<?php echo $uid; ?>">
 
-                                <br/>
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <form>
-                                            <div class="form-group">
-                                                <label for="exampleInputEmail1">Email address</label>
-                                                <input type="email" class="form-control" id="exampleInputEmail1"
-                                                       aria-describedby="emailHelp" placeholder="Enter email">
-                                                <small id="emailHelp" class="form-text text-muted">We'll never share
-                                                    your email with anyone else.
-                                                </small>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Password</label>
-                                                <input type="password" class="form-control" id="exampleInputPassword1"
-                                                       placeholder="Password">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleSelect1">Example select</label>
-                                                <select class="form-control" id="exampleSelect1">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleSelect2">Example multiple select</label>
-                                                <select multiple class="form-control" id="exampleSelect2">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleTextarea">Example textarea</label>
-                                                <textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleInputFile">File input</label>
-                                                <input type="file" class="form-control-file" id="exampleInputFile"
-                                                       aria-describedby="fileHelp">
-                                                <small id="fileHelp" class="form-text text-muted">This is some
-                                                    placeholder block-level help text for the above input. It's a bit
-                                                    lighter and easily wraps to a new line.
-                                                </small>
-                                            </div>
-                                            <fieldset class="form-group">
-                                                <legend>Radio buttons</legend>
-                                                <div class="form-check">
-                                                    <label class="form-check-label">
-                                                        <input type="radio" class="form-check-input"
-                                                               name="optionsRadios" id="optionsRadios1" value="option1"
-                                                               checked>
-                                                        Option one is this and that&mdash;be sure to include why it's
-                                                        great
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <label class="form-check-label">
-                                                        <input type="radio" class="form-check-input"
-                                                               name="optionsRadios" id="optionsRadios2" value="option2">
-                                                        Option two can be something else and selecting it will deselect
-                                                        option one
-                                                    </label>
-                                                </div>
-                                                <div class="form-check disabled">
-                                                    <label class="form-check-label">
-                                                        <input type="radio" class="form-check-input"
-                                                               name="optionsRadios" id="optionsRadios3" value="option3"
-                                                               disabled>
-                                                        Option three is disabled
-                                                    </label>
-                                                </div>
-                                            </fieldset>
-                                            <div class="form-check">
-                                                <label class="form-check-label">
-                                                    <input type="checkbox" class="form-check-input">
-                                                    Check me out
-                                                </label>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </form>
-
+                                    <div class="form-group">
+                                        <label for="username">Username</label>
+                                        <input type="text" class="form-control" id="username" name="username"
+                                               required value="<?php echo $uname; ?>">
                                     </div>
-                                </div>
 
+                                    <div class="form-group">
+                                        <label for="realname">Real Name</label>
+                                        <input type="text" class="form-control" id="realname" name="realname"
+                                               required value="<?php echo $name; ?>">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="uprofile">Profile</label>
+                                        <textarea class="form-control input-lg" id="uprofile" name="uprofile"><?php echo $uprofile; ?></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" name="confirm-password" id="confirm-password" class="form-control" placeholder="Confirm Password" required>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    </br></br>
+                                </form>
                             </div>
                         </div>
-                    </div><!--/row-->
-
-                    <div class="row" id="footer">
-                        <div class="col-sm-6">
-
-                        </div>
-                        <div class="col-sm-6">
-                            <p>
-                                <a href="#" class="pull-right">©Copyright 2013</a>
-                            </p>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <h4 class="text-center">
-                        <a href="http://bootply.com/96266" target="ext">Download this Template @Bootply</a>
-                    </h4>
-
-                    <hr>
-
-
-                </div><!-- /col-9 -->
-            </div><!-- /padding -->
-        </div>
-        <!-- /main -->
-
-    </div>
-</div>
-</div>
-
-
-<!--post modal-->
-<div id="postModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                Update Status
+                        </br></br>
+                    </div><!-- /col-9 -->
+                </div><!-- /padding -->
             </div>
-            <div class="modal-body">
-                <form class="form center-block">
-                    <div class="form-group">
-                        <textarea class="form-control input-lg" autofocus=""
-                                  placeholder="What do you want to share?"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <div>
-                    <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Post</button>
-                    <ul class="pull-left list-inline">
-                        <li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li>
-                        <li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
-                        <li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li>
-                    </ul>
-                </div>
-            </div>
+            <!-- /main -->
         </div>
     </div>
 </div>
+
 <!-- script references -->
 <script src="js/jquery-3.1.1.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
@@ -204,5 +121,46 @@
         crossorigin="anonymous"></script>
 
 <script src="js/scripts.js"></script>
+<script type="text/javascript" language="javascript" class="init">
+    var app = angular.module("myApp", []);
+    app.controller("myCtrl", function ($scope) {
+        $scope.records = <?php echo json_encode(array_values($json)); ?>;
+        $scope.ingredient_records = <?php echo json_encode(array_values($ingredient_json)); ?>;
+        $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
+        $scope.review_records = <?php echo json_encode(array_values($review_json)); ?>;
+        $scope.link_records = <?php echo json_encode(array_values($links_json)); ?>;
+    });
+
+
+    $(document).ready(function () {
+        var photo_wrapper = $(".input_photos_wrap"); //Fields wrapper
+        var add_photo_button = $(".add_photo_button"); //Add button ID
+
+        $(add_photo_button).click(function (e) { //on add input button click
+            e.preventDefault();
+            $(photo_wrapper).append('<div><input type="file" id="photo[]" name="photo[]"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        });
+
+        $(photo_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+            e.preventDefault();
+            $(this).parent('div').remove();
+        });
+
+        var suggestion_wrapper = $(".input_suggestions_wrap"); //Fields wrapper
+        var add_suggestion_button = $(".add_suggestion_button"); //Add button ID
+
+        $(add_suggestion_button).click(function (e) { //on add input button click
+            e.preventDefault();
+            $(suggestion_wrapper).append('<div><textarea class="form-control input-lg" id="suggestion[]" name="suggestion[]"></textarea><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        });
+
+        $(suggestion_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+            e.preventDefault();
+            $(this).parent('div').remove();
+        });
+    });
+</script>
 </body>
 </html>
+
+

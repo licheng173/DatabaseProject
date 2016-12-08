@@ -53,45 +53,17 @@ if (!isset($_SESSION['uid'])) {
                                     <div class="panel panel-default">
                                         <div class="panel-body">
                                             <img src="imgShow.php?rid={{ x.rid }}" style="width: 100%;">
-                                            <hr>
+                                            <div class="panel-heading">
+                                                <h4>{{ x.rtitle }}</h4>
+                                            </div>
                                             <div class="panel-body">
-                                                <p>{{ x.rtitle }}</p>
-                                                <p>{{ x.rserving }}</p>
+                                                <p>Serving: {{ x.rserving }}</p>
                                                 <p>{{ x.rdescription }}</p>
                                             </div>
-
                                         </div>
                                     </div>
                                 </a>
                             </div>
-                            <!--                            <div class="col-sm-4">-->
-                            <!--                                <div class="panel panel-default">-->
-                            <!--                                    <div class="panel-body">-->
-                            <!--                                        <p><a href="#"><img src="images/714402.jpg" style="width: 100%;"></a></p>-->
-                            <!--                                        <div class="clearfix"></div>-->
-                            <!--                                        <hr>-->
-                            <!--                                        Design, build, test, and prototype using Bootstrap in real-time from your-->
-                            <!--                                        Web-->
-                            <!--                                        browser. Bootply combines the power of hand-coded HTML, CSS and JavaScript-->
-                            <!--                                        with-->
-                            <!--                                        the benefits of responsive design using Bootstrap. Find and showcase-->
-                            <!--                                        Bootstrap-ready snippets in the 100% free Bootply.com code repository.-->
-                            <!---->
-                            <!--                                        <div class="grid-col__ratings">-->
-                            <!--                                            <div class="rating-stars" data-scroll-to-anchor="reviews"-->
-                            <!--                                                 data-ratingstars="3.85999989509583">-->
-                            <!--                                                <img height="16" width="16" src="images/full-star.svg">-->
-                            <!--                                                <img height="16" width="16" src="images/full-star.svg">-->
-                            <!--                                                <img height="16" width="16" src="images/full-star.svg">-->
-                            <!--                                                <img height="16" width="16" src="images/full-star.svg">-->
-                            <!--                                                <img height="16" width="16" src="images/empty-star.svg">-->
-                            <!--                                            </div>-->
-                            <!--                                        </div>-->
-                            <!--                                    </div>-->
-                            <!---->
-                            <!--                                </div>-->
-                            <!--                            </div>-->
-
                         </div><!--/row-->
                     </div><!-- /col-9 -->
                 </div><!-- /padding -->

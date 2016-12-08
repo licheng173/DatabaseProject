@@ -31,8 +31,10 @@ include "../dbconf.inc";
 $uid = $_SESSION['uid'];
 
 $myevent_json = array();
+$past_myevent_json = array();
 $allevent_json = array();
 $mygroup_json = array();
+$past_allevent_json = array();
 
 if ($uid != "") {
     $db = new mysqli($hostname, $usr, $pwd, $dbname);
@@ -40,7 +42,7 @@ if ($uid != "") {
         die('Unable to connect to database: ' . $db->connect_error);
     }
 
-    if ($result = $db->prepare("select eid, gid, gname, etime, elocation, edescription, ecuid, etitle from reserve natural join event natural join ggroup where uid = ?;")) {
+    if ($result = $db->prepare("select eid, gid, gname, etime, elocation, edescription, ecuid, etitle from reserve natural join event natural join ggroup where uid = ? and etime > now();")) {
         $result->bind_param("i", $uid);
         $result->execute();
         $result->bind_result($eid, $gid, $gname, $etime, $elocation, $edescription, $ecuid, $etitle);
@@ -58,7 +60,25 @@ if ($uid != "") {
         $result->close();
     }
 
-    if ($result = $db->prepare("select eid, gid, gname, etime, elocation, edescription, ecuid, etitle from event natural join ggroup natural join join_group where uid = ? and eid not in(select eid from reserve natural join event natural join ggroup where uid = ?);")) {
+    if ($result = $db->prepare("select eid, gid, gname, etime, elocation, edescription, ecuid, etitle from reserve natural join event natural join ggroup where uid = ? and etime <= now();")) {
+        $result->bind_param("i", $uid);
+        $result->execute();
+        $result->bind_result($eid, $gid, $gname, $etime, $elocation, $edescription, $ecuid, $etitle);
+
+        while ($result->fetch()) {
+            $past_myevent_json[$eid]["eid"] = $eid;
+            $past_myevent_json[$eid]["gid"] = $gid;
+            $past_myevent_json[$eid]["gname"] = $gname;
+            $past_myevent_json[$eid]["etime"] = $etime;
+            $past_myevent_json[$eid]["elocation"] = $elocation;
+            $past_myevent_json[$eid]["edescription"] = $edescription;
+            $past_myevent_json[$eid]["ecuid"] = $ecuid;
+            $past_myevent_json[$eid]["etitle"] = $etitle;
+        }
+        $result->close();
+    }
+
+    if ($result = $db->prepare("select eid, gid, gname, etime, elocation, edescription, ecuid, etitle from event natural join ggroup natural join join_group where uid = ? and eid not in (select eid from reserve natural join event natural join ggroup where uid = ?) and etime > now();")) {
         $result->bind_param("ii", $uid, $uid);
         $result->execute();
         $result->bind_result($eid, $gid, $gname, $etime, $elocation, $edescription, $ecuid, $etitle);
@@ -72,6 +92,24 @@ if ($uid != "") {
             $allevent_json[$eid]["edescription"] = $edescription;
             $allevent_json[$eid]["ecuid"] = $ecuid;
             $allevent_json[$eid]["etitle"] = $etitle;
+        }
+        $result->close();
+    }
+
+    if ($result = $db->prepare("select eid, gid, gname, etime, elocation, edescription, ecuid, etitle from event natural join ggroup natural join join_group where uid = ? and eid not in (select eid from reserve natural join event natural join ggroup where uid = ?) and etime <= now();")) {
+        $result->bind_param("ii", $uid, $uid);
+        $result->execute();
+        $result->bind_result($eid, $gid, $gname, $etime, $elocation, $edescription, $ecuid, $etitle);
+
+        while ($result->fetch()) {
+            $past_allevent_json[$eid]["eid"] = $eid;
+            $past_allevent_json[$eid]["gid"] = $gid;
+            $past_allevent_json[$eid]["gname"] = $gname;
+            $past_allevent_json[$eid]["etime"] = $etime;
+            $past_allevent_json[$eid]["elocation"] = $elocation;
+            $past_allevent_json[$eid]["edescription"] = $edescription;
+            $past_allevent_json[$eid]["ecuid"] = $ecuid;
+            $past_allevent_json[$eid]["etitle"] = $etitle;
         }
         $result->close();
     }
@@ -126,6 +164,7 @@ if ($uid != "") {
                                 <div class="tab-content col-xs-12 col-sm-12 col-md-12">
                                     <div id="myevent" class="tab-pane fade in active">
                                         <br/>
+                                        <h2>Upcoming Event</h2>
                                         <div class="panel panel-default" ng-repeat="x in myevent_records">
                                             <div class="panel-heading"><a href="individualEvent.php?eid={{ x.eid }}"><h4>{{ x.etitle }}</h4></a></div>
                                             <div class="panel-body">
@@ -136,9 +175,21 @@ if ($uid != "") {
                                                 <a href="cancelReservation.php?eid={{ x.eid }}"><button type="submit" class="btn btn-primary">Cancel Reservation</button></a>
                                             </div>
                                         </div>
+                                        <br/>
+                                        <h2>Past Event</h2>
+                                        <div class="panel panel-default" ng-repeat="x in past_myevent_records">
+                                            <div class="panel-heading"><a href="individualEvent.php?eid={{ x.eid }}"><h4>{{ x.etitle }}</h4></a></div>
+                                            <div class="panel-body">
+                                                <p>Group: {{ x.gname }}</p>
+                                                <p>Location: {{ x.elocation }}</p>
+                                                <p>Detail: {{ x.edescription }}</p>
+                                                <p>Time: {{ x.etime }}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div id="discover" class="tab-pane fade">
                                         <br/>
+                                        <h2>Upcoming Event</h2>
                                         <div class="panel panel-default" ng-repeat="x in allevent_records">
                                             <div class="panel-heading"><a href="individualEvent.php?eid={{ x.eid }}"><h4>{{ x.etitle }}</h4></a></div>
                                             <div class="panel-body">
@@ -149,6 +200,18 @@ if ($uid != "") {
                                                 <a href="reserveEvent.php?eid={{ x.eid }}"><button type="submit" class="btn btn-primary">Reserve</button></a>
                                             </div>
                                         </div>
+                                        <br/>
+                                        <h2>Past Event</h2>
+                                        <div class="panel panel-default" ng-repeat="x in past_allevent_records">
+                                            <div class="panel-heading"><a href="individualEvent.php?eid={{ x.eid }}"><h4>{{ x.etitle }}</h4></a></div>
+                                            <div class="panel-body">
+                                                <p>Group: {{ x.gname }}</p>
+                                                <p>Location: {{ x.elocation }}</p>
+                                                <p>Detail: {{ x.edescription }}</p>
+                                                <p>Time: {{ x.etime }}</p>
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div id="create" class="tab-pane fade">
                                         <br/>
@@ -210,7 +273,9 @@ if ($uid != "") {
     app.controller("myCtrl", function ($scope) {
         $scope.mygroup_records = <?php echo json_encode(array_values($mygroup_json)); ?>;
         $scope.allevent_records = <?php echo json_encode(array_values($allevent_json)); ?>;
+        $scope.past_allevent_records = <?php echo json_encode(array_values($past_allevent_json)); ?>;
         $scope.myevent_records = <?php echo json_encode(array_values($myevent_json)); ?>;
+        $scope.past_myevent_records = <?php echo json_encode(array_values($myevent_json)); ?>;
     });
 </script>
 

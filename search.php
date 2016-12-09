@@ -138,11 +138,25 @@ $keyword = clean($keyword);
 $sql = "select rid, rtitle, rserving, rdescription, sum(rrate)/ count(rid) as rank from recipe natural left join recipe_tag natural left join tag natural left join review where 1 = 1";
 
 if ($keyword != "") {
+
+    if ($result = $db->prepare("insert into search (uid, keyword, stime) values (?, ?, now());")) {
+        $result->bind_param("is", $uid, $keyword);
+        $result->execute();
+        $result->close();
+    }
+
     $keyword = "%" . $keyword . "%";
     $sql = $sql . " and (rtitle like '$keyword' or rdescription like '$keyword')";
 }
 
 if ($tag != 0) {
+
+    if ($result = $db->prepare("insert into tag_search (uid, tid, tctime) values (?, ?, now());")) {
+        $result->bind_param("ii", $uid, $tag);
+        $result->execute();
+        $result->close();
+    }
+
     $sql = $sql . " and tid = $tag";
 }
 

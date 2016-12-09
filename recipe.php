@@ -51,7 +51,11 @@ if ($rid != -1) {
         die('Unable to connect to database: ' . $db->connect_error);
     }
 
-//    $keyword = mysqli_real_escape_strings($db, $keyword);
+    if ($result = $db->prepare("insert into recipe_view (uid, rid, vtime) values (?, ?, now());")) {
+        $result->bind_param("is", $uid, $rid);
+        $result->execute();
+        $result->close();
+    }
 
     if ($result = $db->prepare("select rtitle, rserving, rdescription, uid from recipe where rid = ?;")) {
         $result->bind_param("s", $rid);
@@ -145,7 +149,7 @@ if ($rid != -1) {
                 <div class="padding">
                     <div class="full col-sm-9">
 
-                        <a ng-repeat="x in tag_records" href="tagSpecific.php?tid={{ x.tid }}">
+                        <a ng-repeat="x in tag_records" href="search.php?tag={{ x.tid }}">
                             <button type="button" class="btn btn-success">{{ x.ttitle }}</button>
                         </a>
                         </br></br>

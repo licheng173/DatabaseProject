@@ -47,6 +47,37 @@ if (!isset($_SESSION['uid'])) {
                     <div class="full col-sm-9">
                         <!-- content -->
                         <div class="row">
+
+                            <!--search-->
+                            <form role="form" method="get" name="tag_form" action="search.php"
+                                  enctype="multipart/form-data">
+
+                                <label for="keyword">Keyword</label>
+                                <input type="text" id="keyword" name="keyword">
+                                &nbsp;&nbsp;
+
+                                <label for="tag">Tag</label>
+                                <select id="tag" name="tag">
+                                    <option value="0">all</option>
+                                    <option ng-repeat="x in tag_records" value="{{ x.tid }}">{{ x.ttitle }}
+                                    </option>
+                                </select>
+                                &nbsp;&nbsp;
+
+                                <label for="rating">Rating</label>
+                                <select id="rating" name="rating">
+                                    <option value=0>all</option>
+                                    <option value=1>1</option>
+                                    <option value=2>2</option>
+                                    <option value=3>3</option>
+                                    <option value=4>4</option>
+                                    <option value=5>5</option>
+                                </select>
+                                &nbsp;&nbsp;
+
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </form>
+                            </br></br>
                             <!-- main col right -->
                             <div class="col-sm-4" ng-repeat="x in records">
                                 <a href="recipe.php?rid={{ x.rid }}">
@@ -59,6 +90,7 @@ if (!isset($_SESSION['uid'])) {
                                             <div class="panel-body">
                                                 <p>Serving: {{ x.rserving }}</p>
                                                 <p>{{ x.rdescription }}</p>
+                                                <img src="images/star{{ x.rank }}.svg" style="height: 20px;">
                                             </div>
                                         </div>
                                     </div>
@@ -79,46 +111,79 @@ if (!isset($_SESSION['uid'])) {
 include "../dbconf.inc";
 
 $uid = $_SESSION['uid'];
-$search = $_POST['search'];
+$keyword = $_GET['keyword'];
+$tag = $_GET['tag'];
+$rating = $_GET['rating'];
 
 $json = array();
 
-if ($search != "") {
-    $db = new mysqli($hostname, $usr, $pwd, $dbname);
-    if ($db->connect_error) {
-        die('Unable to connect to database: ' . $db->connect_error);
-    }
-
-    $search = mysqli_real_escape_string($db, $search);
-
-    function clean($string) {
-        $pool = ['%', '&', '<', '>', '*', '$', '#'];
-        foreach ($pool as $c) {
-            $string = str_replace($c, '', $string);
-        }
-        return $string;
-    }
-
-    $search = clean($search);
-    $search = '%' . $search . '%';
-
-    if ($search != "%%" && $result = $db->prepare("select rid, rtitle, rserving, rdescription from recipe where rtitle like ? or rdescription like ?;")) {
-        $result->bind_param("ss", $search, $search);
-        $result->execute();
-        $result->bind_result($rid, $rtitle, $rserving, $rdescription);
-
-        while ($result->fetch()) {
-            $json[$rid]["rid"] = $rid;
-            $json[$rid]["rtitle"] = $rtitle;
-            $json[$rid]["rserving"] = $rserving;
-            $json[$rid]["rdescription"] = $rdescription;
-        }
-        $result->close();
-    }
-    $db->close();
+$db = new mysqli($hostname, $usr, $pwd, $dbname);
+if ($db->connect_error) {
+    die('Unable to connect to database: ' . $db->connect_error);
 }
-?>
 
+$keyword = mysqli_real_escape_string($db, $keyword);
+
+function clean($string)
+{
+    $pool = ['%', '&', '<', '>', '*', '$', '#'];
+    foreach ($pool as $c) {
+        $string = str_replace($c, '^', $string);
+    }
+    return $string;
+}
+
+$keyword = clean($keyword);
+
+$sql = "select rid, rtitle, rserving, rdescription, sum(rrate)/ count(rid) as rank from recipe natural left join recipe_tag natural left join tag natural left join review where 1 = 1";
+
+if ($keyword != "") {
+    $keyword = "%" . $keyword . "%";
+    $sql = $sql . " and (rtitle like '$keyword' or rdescription like '$keyword')";
+}
+
+if ($tag != 0) {
+    $sql = $sql . " and tid = $tag";
+}
+
+$sql = $sql . " group by rid";
+
+if ($rating != 0) {
+    $sql = $sql . " having rank >= $rating";
+}
+
+$sql = $sql . ";";
+
+
+if ($result = $db->prepare($sql)) {
+    $result->execute();
+    $result->bind_result($rid, $rtitle, $rserving, $rdescription, $rank);
+
+    while ($result->fetch()) {
+        $json[$rid]["rid"] = $rid;
+        $json[$rid]["rtitle"] = $rtitle;
+        $json[$rid]["rserving"] = $rserving;
+        $json[$rid]["rdescription"] = $rdescription;
+        $json[$rid]["rank"] = (int)($rank);
+
+    }
+    $result->close();
+}
+
+$tag_json = array();
+
+if ($result = $db->prepare("select tid, ttitle from tag;")) {
+    $result->execute();
+    $result->bind_result($tid, $ttitle);
+
+    while ($result->fetch()) {
+        $tag_json[$tid]["tid"] = $tid;
+        $tag_json[$tid]["ttitle"] = $ttitle;
+    }
+    $result->close();
+}
+$db->close();
+?>
 <!-- script references -->
 <script src="js/jquery-3.1.1.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
@@ -131,6 +196,7 @@ if ($search != "") {
     var app = angular.module("myApp", []);
     app.controller("myCtrl", function ($scope) {
         $scope.records = <?php echo json_encode(array_values($json)); ?>;
+        $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
     });
 </script>
 </body>

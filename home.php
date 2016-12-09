@@ -24,7 +24,7 @@ if (!isset($_SESSION['uid'])) {
     <link href="css/styles.css" rel="stylesheet">
     <script type="text/javascript" src="js/angular.min.js"></script>
 </head>
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
 <div class="wrapper">
     <div class="box">
         <div class="row row-offcanvas row-offcanvas-left">
@@ -46,7 +46,38 @@ if (!isset($_SESSION['uid'])) {
                 <div class="padding">
                     <div class="full col-sm-9">
                         <!-- content -->
-                        <div class="row" ng-app="myApp" ng-controller="myCtrl">
+                        <div class="row">
+
+                            <!--search-->
+                            <form role="form" method="get" name="tag_form" action="search.php"
+                                  enctype="multipart/form-data">
+
+                                <label for="keyword">Keyword</label>
+                                <input type="text" id="keyword" name="keyword">
+                                &nbsp;&nbsp;
+
+                                <label for="tag">Tag</label>
+                                <select id="tag" name="tag">
+                                    <option value="0">all</option>
+                                    <option ng-repeat="x in tag_records" value="{{ x.tid }}">{{ x.ttitle }}
+                                    </option>
+                                </select>
+                                &nbsp;&nbsp;
+
+                                <label for="rating">Rating</label>
+                                <select id="rating" name="rating">
+                                    <option value=0>all</option>
+                                    <option value=1>1</option>
+                                    <option value=2>2</option>
+                                    <option value=3>3</option>
+                                    <option value=4>4</option>
+                                    <option value=5>5</option>
+                                </select>
+                                &nbsp;&nbsp;
+
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </form>
+                            </br></br>
                             <!-- main col right -->
                             <div class="col-sm-4" ng-repeat="x in records">
                                 <a href="recipe.php?rid={{ x.rid }}">
@@ -59,6 +90,7 @@ if (!isset($_SESSION['uid'])) {
                                             <div class="panel-body">
                                                 <p>Serving: {{ x.rserving }}</p>
                                                 <p>{{ x.rdescription }}</p>
+                                                <img src="images/star{{ x.rank }}.svg" style="height: 20px;">
                                             </div>
                                         </div>
                                     </div>
@@ -85,7 +117,7 @@ if ($db->connect_error) {
     die('Unable to connect to database: ' . $db->connect_error);
 }
 
-$sql = "select rid, rtitle, rserving, rdescription from recipe;";
+$sql = "select rid, rtitle, rserving, rdescription, sum(rrate)/ count(rid) as rank from recipe natural left join review group by rid;";
 $result = $db->query($sql);
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -94,9 +126,23 @@ if ($result->num_rows > 0) {
         $json[$rid]["rtitle"] = $row["rtitle"];
         $json[$rid]["rserving"] = $row["rserving"];
         $json[$rid]["rdescription"] = $row["rdescription"];
+        $json[$rid]["rank"] = (int)($row["rank"]);
     }
 }
 $result->close();
+
+$tag_json = array();
+
+if ($result = $db->prepare("select tid, ttitle from tag;")) {
+    $result->execute();
+    $result->bind_result($tid, $ttitle);
+
+    while ($result->fetch()) {
+        $tag_json[$tid]["tid"] = $tid;
+        $tag_json[$tid]["ttitle"] = $ttitle;
+    }
+    $result->close();
+}
 $db->close();
 ?>
 
@@ -112,6 +158,7 @@ $db->close();
     var app = angular.module("myApp", []);
     app.controller("myCtrl", function ($scope) {
         $scope.records = <?php echo json_encode(array_values($json)); ?>;
+        $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
     });
 </script>
 </body>

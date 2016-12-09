@@ -59,6 +59,7 @@ if (!isset($_SESSION['uid'])) {
                                             <div class="panel-body">
                                                 <p>Serving: {{ x.rserving }}</p>
                                                 <p>{{ x.rdescription }}</p>
+                                                <img src="images/star{{ x.rank }}.svg" style="height: 20px;">
                                             </div>
                                         </div>
                                     </div>
@@ -88,18 +89,17 @@ if ($uid != "") {
         die('Unable to connect to database: ' . $db->connect_error);
     }
 
-//    $keyword = mysqli_real_escape_strings($db, $keyword);
-
-    if ($result = $db->prepare("select rid, rtitle, rserving, rdescription from recipe where uid = ?;")) {
+    if ($result = $db->prepare("select rid, rtitle, rserving, rdescription, sum(rrate)/ count(rid) as rank from recipe natural left join review where uid = ? group by rid;")) {
         $result->bind_param("i", $uid);
         $result->execute();
-        $result->bind_result($rid, $rtitle, $rserving, $rdescription);
+        $result->bind_result($rid, $rtitle, $rserving, $rdescription, $rank);
 
         while ($result->fetch()) {
             $json[$rid]["rid"] = $rid;
             $json[$rid]["rtitle"] = $rtitle;
             $json[$rid]["rserving"] = $rserving;
             $json[$rid]["rdescription"] = $rdescription;
+            $json[$rid]["rank"] = (int)($rank);
         }
         $result->close();
     }

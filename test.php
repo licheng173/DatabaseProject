@@ -1,6 +1,4 @@
 <?php
-$search = "asdfg%ad#<s?f>g";
 
-
-echo htmlspecialchars($search);
+echo (int)(4.000);
 ?>

@@ -192,7 +192,7 @@ CREATE TABLE `Recipe_View` (
   KEY `rid` (`rid`),
   CONSTRAINT `rid_RV_Recipe` FOREIGN KEY (`rid`) REFERENCES `Recipe` (`rid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `uid_RV_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -260,7 +260,7 @@ CREATE TABLE `Review` (
   `r_id` varchar(13) NOT NULL,
   `rid` varchar(13) NOT NULL,
   `uid` int(11) unsigned NOT NULL,
-  `rrate` int(1) unsigned DEFAULT NULL,
+  `rrate` int(1) unsigned NOT NULL DEFAULT '0',
   `rtext` text NOT NULL,
   `rvtitle` varchar(45) NOT NULL,
   PRIMARY KEY (`r_id`),
@@ -287,7 +287,7 @@ CREATE TABLE `Review_Photo` (
   PRIMARY KEY (`p_id`),
   KEY `r_id` (`r_id`),
   CONSTRAINT `r_id_RP_Review` FOREIGN KEY (`r_id`) REFERENCES `Review` (`r_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,7 +322,7 @@ CREATE TABLE `Search` (
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`),
   CONSTRAINT `uid_Search_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -340,13 +340,13 @@ CREATE TABLE `Tag` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Tag_Click`
+-- Table structure for table `Tag_Search`
 --
 
-DROP TABLE IF EXISTS `Tag_Click`;
+DROP TABLE IF EXISTS `Tag_Search`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Tag_Click` (
+CREATE TABLE `Tag_Search` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tid` int(11) unsigned NOT NULL,
   `uid` int(11) unsigned NOT NULL,
@@ -356,7 +356,7 @@ CREATE TABLE `Tag_Click` (
   KEY `uid` (`uid`),
   CONSTRAINT `tid_TC_Tag` FOREIGN KEY (`tid`) REFERENCES `Tag` (`tid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `uid_TC_User` FOREIGN KEY (`uid`) REFERENCES `User` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -400,4 +400,4 @@ CREATE TABLE `User` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-12-08 17:25:40
+-- Dump completed on 2016-12-08 23:49:53

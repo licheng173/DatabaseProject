@@ -23,6 +23,31 @@ if (!isset($_SESSION['uid'])) {
 
     <link href="css/styles.css" rel="stylesheet">
     <script type="text/javascript" src="js/angular.min.js"></script>
+    <style type="text/css">
+        .serving_p {
+            font-weight: bold;
+        }
+        .recipe-img {
+            margin-left: 4px;
+        }
+        .serving-bar {
+            border-bottom: inset; 1px gray;
+
+        }
+        .description {
+            margin-top: 10px;
+            font-style: solid;
+
+        }
+        .seperate {
+            border-bottom-style: solid;
+        }
+        h3 {
+            margin-top: 40px;
+            font-family: serif;
+            font-weight: 200;
+        }
+    </style>
 </head>
 <body ng-app="myApp" ng-controller="myCtrl">
 
@@ -156,25 +181,33 @@ if ($rid != -1) {
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3><?php echo $rtitle ?></h3>
+                                <h4><?php echo $rtitle ?></h4>
                             </div>
                             <div class="panel-body">
-                                <p>Serving: <?php echo $rserving ?></p>
-                                <p><?php echo $rdescription ?></p>
+                                <div class="serving-bar">
+                                    <span class="serving_p">Serving: <?php echo $rserving ?></span>
+                                    <img class="recipe-img" src="images/serving-recipe.png">
+                                </div>
+                                    <p class="description"><?php echo $rdescription ?></p>
+                                
+                                
                             </div>
                         </div>
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3>Ingredients</h3>
+                                <h4>Ingredients</h4>
                             </div>
                             <div class="panel-body">
-                                <p ng-repeat="x in ingredient_records">{{ x.iname }} {{ x.iquantity }} g</p>
+                                <li ng-repeat="x in ingredient_records">{{ x.iname }} : {{ x.iquantity }} g</li>
                             </div>
                         </div>
 
                         <!-- images -->
-                        <div class="row">
+                        <div class="panel panel-default">
+                        <!-- <div class="panel-heading"> -->
+                        <div class="panel-body">
+                        <!-- <div class="row"> -->
                             <!-- main col right -->
                             <div class="col-sm-4" ng-repeat="x in records">
                                 <div class="panel panel-default">
@@ -184,9 +217,14 @@ if ($rid != -1) {
                                 </div>
                             </div>
                         </div><!--/row-->
-
+                        <!-- </div> -->
+                        <!-- </div> -->
+                        </div>
+                        <div class="panel panel-default">
+                        <!-- <div class="panel-heading"> -->
+                        <div class="panel-heading">
                         <div class="row">
-                            <h3>Links</h3>
+                            <h4>Links</h4>
                             <!-- main col right -->
                             <div class="col-sm-4" ng-repeat="x in link_records">
                                 <a href="recipe.php?rid={{ x.link_rid }}">
@@ -197,27 +235,28 @@ if ($rid != -1) {
                                     </div>
                                 </a>
                             </div>
-                        </div><!--/row-->
-
-                        </br></br></br>
-                        <?php
-                        if ($recipe_uid == $uid) {
+                            <?php
+                                if ($recipe_uid == $uid) {
                             ?>
+                        </div>
+                        </div>
+                        <div class="panel-body">
                             <a href="deleteRicpe.php?rid=<?php echo $rid; ?>">
-                                <button type="submit" class="btn btn-primary">Delete recipe</button>
+                            <button type="submit" class="btn btn-primary">Delete recipe</button>
                             </a>
                             <?php
-                        };
-                        ?>
-                        <!--add link-->
-                        <a href="addLink.php?rid=<?php echo $rid; ?>">
-                            <button type="submit" class="btn btn-info">Link to my recipe</button>
-                        </a>
-                    </div>
-
-
-                    <div class="full col-sm-9">
-
+                                };
+                            ?>
+                                <!--add link-->
+                            <a href="addLink.php?rid=<?php echo $rid; ?>">
+                                <button type="submit" class="btn btn-info">Link to my recipe</button>
+                            </a>
+                         </div>
+                         </div>
+                    
+                    
+<!--                    <div class="full col-sm-9">-->
+                   
                         <h2>Reviews</h2>
 
                         <div class="panel panel-default" ng-repeat="x in review_records">
@@ -238,7 +277,7 @@ if ($rid != -1) {
                         <!--new review-->
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <h3>New Review</h3>
+                                <h4>New Review</h4>
                                 <hr>
                                 <form role="form" method="post" name="review_form" action="sendReview.php"
                                       enctype="multipart/form-data">
@@ -291,7 +330,7 @@ if ($rid != -1) {
                             </div>
                         </div>
                         </br></br>
-                    </div><!-- /col-9 -->
+                    
                 </div><!-- /padding -->
             </div>
             <!-- /main -->

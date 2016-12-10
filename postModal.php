@@ -25,6 +25,18 @@ if (!isset($_SESSION['uid'])) {
     <script type="text/javascript" src="js/angular.min.js"></script>
     <!-- script references -->
     <script src="js/jquery-3.1.1.min.js"></script>
+    <style type="text/css">
+        input {
+            margin-bottom: 4px;
+
+        }
+        .tag-div{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 17px;
+            font-weight: bold;
+        }
+        
+    </style>
 </head>
 <body ng-app="myApp" ng-controller="myCtrl">
 <div class="wrapper">
@@ -56,14 +68,12 @@ if (!isset($_SESSION['uid'])) {
                                     <div class="panel-body">
                                         <form role="form" method="post" name="recipe_form" action="sendRecipe.php" enctype="multipart/form-data">
                                             <div class="form-group">
-                                                <label for="tag">Tag(s)</label>
-                                                <div class="input_tags_wrap" id="tag" name="tag"
-                                                     ng-repeat="x in records">
-                                                    <div class="checkbox">
-                                                        <label><input type="checkbox" value="{{ x.tid }}" name="tag[]">{{
-                                                            x.ttitle }}</label>
-                                                    </div>
-                                                </div>
+                                                <div class="tag-div" for="tag">Tag(s)</div>
+                                                <span class="input_tags_wrap" id="tag" name="tag" ng-repeat="x in records">
+                                                    <!-- <span class="checkbox"> -->
+                                                        <label><input type="checkbox" value="{{ x.tid   }}" name="tag[] " > {{  x.ttitle }}</label>
+                                                    <!-- </span> -->
+                                                </span>
                                             </div>
 
                                             <div class="form-group">

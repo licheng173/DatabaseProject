@@ -23,6 +23,21 @@ if (!isset($_SESSION['uid'])) {
 
     <link href="css/styles.css" rel="stylesheet">
     <script type="text/javascript" src="js/angular.min.js"></script>
+    <style>
+        .serve-p {
+            font-family:fantasy;
+            font-size: 16px;
+        }
+        .im {
+            margin-right: 30px;
+        }
+        .description-p {
+            color: #7f7f7f;
+            padding-top: .5rem;
+            clear:both;
+            text-align: justify;
+        }
+    </style>
 </head>
 <body>
 <div class="wrapper">
@@ -57,9 +72,12 @@ if (!isset($_SESSION['uid'])) {
                                                 <h4>{{ x.rtitle }}</h4>
                                             </div>
                                             <div class="panel-body">
-                                                <p>Serving: {{ x.rserving }}</p>
-                                                <p>{{ x.rdescription }}</p>
-                                                <img src="images/star{{ x.rank }}.svg" style="height: 20px;">
+                                                <div>
+                                                    <img class="im" src="images/star{{ x.rank }}.svg" style="height: 20px;">
+                                                    <span class="serve-p"> Serving:{{x.rserving }}</span>
+                                                </div>
+                                                
+                                                <div class="description-p">{{ x.rdescription }}</div>
                                             </div>
                                         </div>
                                     </div>

@@ -163,7 +163,7 @@ $db->close();
 <script type="text/javascript" language="javascript" class="init">
     var app = angular.module("myApp", []);
     app.controller("myCtrl", function ($scope) {
-        $scope.search_records = <?php echo json_encode(array_values($search_json)); ?>;
+        $scope.search_records = <?php echo json_encode(array_values($keyword_json)); ?>;
         $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
         $scope.recipe_records = <?php echo json_encode(array_values($recipe_json)); ?>;
     });

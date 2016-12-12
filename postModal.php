@@ -84,7 +84,7 @@ if (!isset($_SESSION['uid'])) {
 
                                             <div class="form-group">
                                                 <label for="rserving">Serving</label>
-                                                <input type="number" class="form-control" id="rserving" name="rserving"
+                                                <input type="number" id="rserving" name="rserving"
                                                        required>
                                             </div>
 
@@ -116,7 +116,6 @@ if (!isset($_SESSION['uid'])) {
                                             <div class="form-group">
                                                 <label for="photos">Photo(s)</label>
                                                 <div class="input_photos_wrap" id="photos">
-                                                    <div><input type="file" id="photo[]" name="photo[]"></div>
                                                 </div>
                                                 <button class="add_photo_button btn btn-primary">Add More Photos
                                                 </button>

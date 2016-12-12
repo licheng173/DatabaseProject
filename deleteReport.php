@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['uid'])) {
-    header("Location: login.php");
+    header("Location: index.php");
 }
 
 $rpid = $_GET['rpid'];

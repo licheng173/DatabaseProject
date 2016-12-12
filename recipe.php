@@ -27,22 +27,32 @@ if (!isset($_SESSION['uid'])) {
         .serving_p {
             font-weight: bold;
         }
+
         .recipe-img {
             margin-left: 4px;
         }
+
         .serving-bar {
-            border-bottom: inset; 1px gray;
+            border-bottom: inset;
+            1px gray;
 
         }
+
         .description {
             margin-top: 10px;
             font-style: solid;
 
         }
+
         .seperate {
             border-bottom-style: solid;
         }
+<<<<<<< HEAD
         .newH3 {
+=======
+
+        h3 {
+>>>>>>> origin/master
             margin-top: 40px;
         }
         h3 {
@@ -184,16 +194,20 @@ if ($rid != -1) {
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
+<<<<<<< HEAD
                                 <h3><?php echo $rtitle ?></h3>
+=======
+                                <h4><?php echo $rtitle; ?></h4>
+>>>>>>> origin/master
                             </div>
                             <div class="panel-body">
                                 <div class="serving-bar">
-                                    <span class="serving_p">Serving: <?php echo $rserving ?></span>
+                                    <span class="serving_p">Serving: <?php echo $rserving; ?></span>
                                     <img class="recipe-img" src="images/serving-recipe.png">
                                 </div>
-                                    <p class="description"><?php echo $rdescription ?></p>
-                                
-                                
+                                <p class="description"><?php echo $rdescription; ?></p>
+
+
                             </div>
                         </div>
 
@@ -208,21 +222,29 @@ if ($rid != -1) {
 
                         <!-- images -->
                         <div class="panel panel-default">
-                        <!-- <div class="panel-heading"> -->
-                        <div class="panel-body">
-                        <!-- <div class="row"> -->
-                            <!-- main col right -->
-                            <div class="col-sm-4" ng-repeat="x in records">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <img src="image.php?pid={{ x.pid }}" style="width: 100%;">
+                            <!-- <div class="panel-heading"> -->
+                            <div class="panel-body">
+                                <!-- <div class="row"> -->
+                                <!-- main col right -->
+                                <div class="col-sm-4" ng-repeat="x in records">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <img src="image.php?pid={{ x.pid }}" style="width: 100%;">
+                                        </div>
                                     </div>
                                 </div>
+<<<<<<< HEAD
                             </div>
                         </div><!--/row-->
+=======
+                            </div><!--/row-->
+                            <!-- </div> -->
+                            <!-- </div> -->
+>>>>>>> origin/master
                         </div>
                 
                         <div class="panel panel-default">
+<<<<<<< HEAD
                         <!-- <div class="panel-heading"> -->
                         <div class="panel-heading">
 <!--                        <div class="row">-->
@@ -238,9 +260,28 @@ if ($rid != -1) {
                                         </div>
                                     
                                 </a>
+=======
+                            <!-- <div class="panel-heading"> -->
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <h4>Links</h4>
+                                    <!-- main col right -->
+                                    <div class="col-sm-4" ng-repeat="x in link_records">
+                                        <a href="recipe.php?rid={{ x.link_rid }}">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <h4>{{ x.link_rtitle }}</h4>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+>>>>>>> origin/master
                             </div>
-                            <?php
+                            <div class="panel-body">
+                                <?php
                                 if ($recipe_uid == $uid) {
+<<<<<<< HEAD
                             ?>
 <!--                        </div>-->
                             <div class="panel-body">
@@ -248,9 +289,20 @@ if ($rid != -1) {
                             <button type="submit" class="btn btn-primary">Delete recipe</button>
                             </a>
                             <?php
+=======
+                                    ?>
+                                    <a href="deleteRicpe.php?rid=<?php echo $rid; ?>">
+                                        <button type="submit" class="btn btn-primary">Delete recipe</button>
+                                    </a>
+                                    <a href="editRicpe.php?rid=<?php echo $rid; ?>">
+                                        <button type="submit" class="btn btn-warning">Edit recipe</button>
+                                    </a>
+                                    <?php
+>>>>>>> origin/master
                                 };
-                            ?>
+                                ?>
                                 <!--add link-->
+<<<<<<< HEAD
                             <a href="addLink.php?rid=<?php echo $rid; ?>">
                                 <button type="submit" class="btn btn-info">Link to my recipe</button>
                             </a>
@@ -266,6 +318,18 @@ if ($rid != -1) {
 <!--                    <div class="full col-sm-9">-->
                    
                         <h3 class="newH3">Reviews</h3>
+=======
+                                <a href="addLink.php?rid=<?php echo $rid; ?>">
+                                    <button type="submit" class="btn btn-info">Link to my recipe</button>
+                                </a>
+                            </div>
+                        </div>
+
+
+                        <!--                    <div class="full col-sm-9">-->
+
+                        <h2>Reviews</h2>
+>>>>>>> origin/master
 
                         <div class="panel panel-default" ng-repeat="x in review_records">
                             <a href="review.php?r_id={{ x.r_id }}">
@@ -338,61 +402,61 @@ if ($rid != -1) {
                             </div>
                         </div>
                         </br></br>
-                    
-                </div><!-- /padding -->
+
+                    </div><!-- /padding -->
+                </div>
+                <!-- /main -->
             </div>
-            <!-- /main -->
         </div>
     </div>
-</div>
 
-<!-- script references -->
-<script src="js/jquery-3.1.1.min.js"></script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
+    <!-- script references -->
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
 
-<script src="js/scripts.js"></script>
-<script type="text/javascript" language="javascript" class="init">
-    var app = angular.module("myApp", []);
-    app.controller("myCtrl", function ($scope) {
-        $scope.records = <?php echo json_encode(array_values($json)); ?>;
-        $scope.ingredient_records = <?php echo json_encode(array_values($ingredient_json)); ?>;
-        $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
-        $scope.review_records = <?php echo json_encode(array_values($review_json)); ?>;
-        $scope.link_records = <?php echo json_encode(array_values($links_json)); ?>;
-    });
-
-
-    $(document).ready(function () {
-        var photo_wrapper = $(".input_photos_wrap"); //Fields wrapper
-        var add_photo_button = $(".add_photo_button"); //Add button ID
-
-        $(add_photo_button).click(function (e) { //on add input button click
-            e.preventDefault();
-            $(photo_wrapper).append('<div><input type="file" id="photo[]" name="photo[]"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+    <script src="js/scripts.js"></script>
+    <script type="text/javascript" language="javascript" class="init">
+        var app = angular.module("myApp", []);
+        app.controller("myCtrl", function ($scope) {
+            $scope.records = <?php echo json_encode(array_values($json)); ?>;
+            $scope.ingredient_records = <?php echo json_encode(array_values($ingredient_json)); ?>;
+            $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
+            $scope.review_records = <?php echo json_encode(array_values($review_json)); ?>;
+            $scope.link_records = <?php echo json_encode(array_values($links_json)); ?>;
         });
 
-        $(photo_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-            e.preventDefault();
-            $(this).parent('div').remove();
-        });
 
-        var suggestion_wrapper = $(".input_suggestions_wrap"); //Fields wrapper
-        var add_suggestion_button = $(".add_suggestion_button"); //Add button ID
+        $(document).ready(function () {
+            var photo_wrapper = $(".input_photos_wrap"); //Fields wrapper
+            var add_photo_button = $(".add_photo_button"); //Add button ID
 
-        $(add_suggestion_button).click(function (e) { //on add input button click
-            e.preventDefault();
-            $(suggestion_wrapper).append('<div><textarea class="form-control input-lg" id="suggestion[]" name="suggestion[]"></textarea><a href="#" class="remove_field">Remove</a></div>'); //add input box
-        });
+            $(add_photo_button).click(function (e) { //on add input button click
+                e.preventDefault();
+                $(photo_wrapper).append('<div><input type="file" id="photo[]" name="photo[]"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            });
 
-        $(suggestion_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-            e.preventDefault();
-            $(this).parent('div').remove();
+            $(photo_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+                e.preventDefault();
+                $(this).parent('div').remove();
+            });
+
+            var suggestion_wrapper = $(".input_suggestions_wrap"); //Fields wrapper
+            var add_suggestion_button = $(".add_suggestion_button"); //Add button ID
+
+            $(add_suggestion_button).click(function (e) { //on add input button click
+                e.preventDefault();
+                $(suggestion_wrapper).append('<div><textarea class="form-control input-lg" id="suggestion[]" name="suggestion[]"></textarea><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            });
+
+            $(suggestion_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+                e.preventDefault();
+                $(this).parent('div').remove();
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
 

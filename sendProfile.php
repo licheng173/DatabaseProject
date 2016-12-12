@@ -14,9 +14,9 @@ if ($db->connect_error) {
 
 $uid = $_SESSION['uid'];
 
-$uname = $_POST['username'];
-$realname = $_POST['realname'];
-$uprofile = $_POST['uprofile'];
+$uname = htmlspecialchars($_POST['username']);
+$realname = htmlspecialchars($_POST['realname']);
+$uprofile = htmlspecialchars($_POST['uprofile']);
 $pass = $_POST['password'];
 $conpass = $_POST['confirm-password'];
 

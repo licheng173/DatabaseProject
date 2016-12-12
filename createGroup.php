@@ -5,8 +5,8 @@ if (!isset($_SESSION['uid'])) {
 }
 
 $uid = $_SESSION['uid'];
-$gname = $_POST['gname'];
-$gdescription = $_POST['gdescription'];
+$gname = htmlspecialchars($_POST['gname']);
+$gdescription = htmlspecialchars($_POST['gdescription']);
 $gid = uniqid();
 
 include "../dbconf.inc";

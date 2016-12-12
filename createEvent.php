@@ -8,9 +8,9 @@ date_default_timezone_set('America/New_York');
 
 $uid = $_SESSION['uid'];
 $gid = $_POST['gid'];
-$etitle = $_POST['etitle'];
-$elocation = $_POST['elocation'];
-$edescription = $_POST['edescription'];
+$etitle = htmlspecialchars($_POST['etitle']);
+$elocation = htmlspecialchars($_POST['elocation']);
+$edescription = htmlspecialchars($_POST['edescription']);
 $etime = $_POST['etime'];
 $etime = strftime('%Y-%m-%d %H:%M:%S', strtotime($etime));
 

@@ -252,7 +252,7 @@ if ($rid != -1) {
                                 if ($recipe_uid == $uid) {
 
                             ?>
-                                    
+
                             <a href="deleteRicpe.php?rid=<?php echo $rid; ?>">
                             <button type="submit" class="btn btn-primary">Delete recipe</button>
                             </a>

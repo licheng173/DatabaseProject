@@ -275,7 +275,7 @@ if ($uid != "") {
         $scope.allevent_records = <?php echo json_encode(array_values($allevent_json)); ?>;
         $scope.past_allevent_records = <?php echo json_encode(array_values($past_allevent_json)); ?>;
         $scope.myevent_records = <?php echo json_encode(array_values($myevent_json)); ?>;
-        $scope.past_myevent_records = <?php echo json_encode(array_values($myevent_json)); ?>;
+        $scope.past_myevent_records = <?php echo json_encode(array_values($past_myevent_json)); ?>;
     });
 </script>
 

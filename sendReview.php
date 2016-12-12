@@ -6,8 +6,8 @@ if (!isset($_SESSION['uid'])) {
 
 $uid = $_SESSION['uid'];
 $rid = $_POST['rid'];
-$rvtitle = $_POST['rvtitle'];
-$rtext = $_POST['rtext'];
+$rvtitle = htmlspecialchars($_POST['rvtitle']);
+$rtext = htmlspecialchars($_POST['rtext']);
 $rrate = $_POST['rrate'];
 
 include "../dbconf.inc";

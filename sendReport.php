@@ -6,7 +6,7 @@ if (!isset($_SESSION['uid'])) {
 
 $uid = $_SESSION['uid'];
 $eid = $_POST['eid'];
-$content = $_POST['rpcontent'];
+$content = htmlspecialchars($_POST['rpcontent']);
 
 include "../dbconf.inc";
 

@@ -133,7 +133,7 @@ function clean($string)
     return $string;
 }
 
-$keyword = clean($keyword);
+$keyword = htmlspecialchars(clean($keyword));
 
 $sql = "select rid, rtitle, rserving, rdescription, sum(rrate)/ count(rid) as rank from recipe natural left join recipe_tag natural left join tag natural left join review where 1 = 1";
 

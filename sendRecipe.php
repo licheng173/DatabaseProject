@@ -6,12 +6,12 @@ if (!isset($_SESSION['uid'])) {
 
 $uid = $_SESSION['uid'];
 
-$rtitle = $_POST['rtitle'];
+$rtitle = htmlspecialchars($_POST['rtitle']);
 $rserving = $_POST['rserving'];
 $ingredients = $_POST['ingredients'];
 $units = $_POST['unit'];
 $amounts = $_POST['amount'];
-$rdescription = $_POST['rdescription'];
+$rdescription = htmlspecialchars($_POST['rdescription']);
 
 include "../dbconf.inc";
 
@@ -40,7 +40,7 @@ for ($i = 0; $i < count($ingredients); $i++) {
 
         $iquantity = $amounts[$i] * $quantity_in_gram;
 
-        $iname = $ingredients[$i];
+        $iname = htmlspecialchars($ingredients[$i]);
 
         if ($result = $db->prepare("insert into ingredient (rid, iname, iquantity) values (?, ?, ?);")) {
             $result->bind_param("ssd", $rid, $iname, $iquantity);

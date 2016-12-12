@@ -118,8 +118,8 @@ if ($result = $db->prepare("select id, keyword, stime from search where uid = ? 
     $result->bind_result($sid, $keyword, $stime);
 
     while ($result->fetch()) {
-        $search_json[$sid]["keyword"] = $keyword;
-        $search_json[$sid]["stime"] = $stime;
+        $keyword_json[$sid]["keyword"] = $keyword;
+        $keyword_json[$sid]["stime"] = $stime;
     }
     $result->close();
 }

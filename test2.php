@@ -1,1 +1,0 @@
-<p><?php echo json_encode(array_values($allgroup_json));?></p>

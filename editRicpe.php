@@ -69,12 +69,12 @@ if (isset($_GET['rid'])) {
 
 
 $uid = $_SESSION['uid'];
-
+$alltag_json = array();
 $ingredient_json = array();
 $tag_json = array();
 $json = array();
-$review_json = array();
 $links_json = array();
+$unit_json = array();
 
 if ($rid != -1) {
     $db = new mysqli($hostname, $usr, $pwd, $dbname);
@@ -128,22 +128,6 @@ if ($rid != -1) {
         $result->close();
     }
 
-    if ($result = $db->prepare("select r_id, uid, uname, rrate, rtext, rvtitle from review natural join user where rid = ?;")) {
-        $result->bind_param("s", $rid);
-        $result->execute();
-        $result->bind_result($r_id, $r_uid, $r_uname, $rrate, $rtext, $rvtitle);
-        while ($result->fetch()) {
-            $review_json[$r_id]["r_id"] = $r_id;
-            $review_json[$r_id]["r_uid"] = $r_uid;
-            $review_json[$r_id]["r_uname"] = $r_uname;
-            $review_json[$r_id]["rrate"] = $rrate;
-            $review_json[$r_id]["rtext"] = $rtext;
-            $review_json[$r_id]["rvtitle"] = $rvtitle;
-        }
-
-        $result->close();
-    }
-
     if ($result = $db->prepare("select r.rid, r.rtitle from link_recipe l join recipe r where l.rid = ? and l.rid_link = r.rid;")) {
         $result->bind_param("s", $rid);
         $result->execute();
@@ -155,6 +139,28 @@ if ($rid != -1) {
 
         $result->close();
     }
+
+    if ($result = $db->prepare("select unit_name from unit_conversion;")) {
+        $result->execute();
+        $result->bind_result($unit_name);
+
+        while ($result->fetch()) {
+            $unit_json[$unit_name]["unit_name"] = $unit_name;
+        }
+        $result->close();
+    }
+
+    if ($result = $db->prepare("select tid, ttitle from tag;")) {
+        $result->execute();
+        $result->bind_result($tid, $ttitle);
+
+        while ($result->fetch()) {
+            $alltag_json[$tid]["tid"] = $tid;
+            $alltag_json[$tid]["ttitle"] = $ttitle;
+        }
+        $result->close();
+    }
+
 
     $db->close();
 }
@@ -180,32 +186,21 @@ if ($rid != -1) {
                 <div class="padding">
                     <div class="full col-sm-9">
 
-                        <a ng-repeat="x in tag_records" href="search.php?tag={{ x.tid }}">
+                        <a ng-repeat="x in tag_records" href="deleteTag.php?rid=<?php echo $rid; ?>&tag={{ x.tid }}">
                             <button type="button" class="btn btn-success">{{ x.ttitle }}</button>
                         </a>
                         </br></br>
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4><?php echo $rtitle; ?></h4>
-                            </div>
-                            <div class="panel-body">
-                                <div class="serving-bar">
-                                    <span class="serving_p">Serving: <?php echo $rserving; ?></span>
-                                    <img class="recipe-img" src="images/serving-recipe.png">
-                                </div>
-                                <p class="description"><?php echo $rdescription; ?></p>
-
-
-                            </div>
-                        </div>
-
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
                                 <h4>Ingredients</h4>
                             </div>
                             <div class="panel-body">
-                                <li ng-repeat="x in ingredient_records">{{ x.iname }} : {{ x.iquantity }} g</li>
+                                <li ng-repeat="x in ingredient_records">{{ x.iname }} : {{ x.iquantity }} g<a
+                                        href="deleteIngredient.php?rid=<?php echo $rid; ?>&iname={{ x.iname }}">
+                                        <button type="button" class="btn btn-success">Delete</button>
+                                    </a></li>
+
                             </div>
                         </div>
 
@@ -218,7 +213,11 @@ if ($rid != -1) {
                                 <div class="col-sm-4" ng-repeat="x in records">
                                     <div class="panel panel-default">
                                         <div class="panel-body">
-                                            <img src="image.php?pid={{ x.pid }}" style="width: 100%;">
+                                            <img src="image.php?pid={{ x.pid }}" style="width: 100%;"><a
+                                                href="deleteRecipePicture.php?rid=<?php echo $rid; ?>&pid={{ x.pid }}">
+                                                </br></br>
+                                                <button type="button" class="btn btn-success">Delete</button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -237,107 +236,81 @@ if ($rid != -1) {
                                             <div class="panel panel-default">
                                                 <div class="panel-body">
                                                     <h4>{{ x.link_rtitle }}</h4>
+                                                    <a href="deleteLink.php?rid=<?php echo $rid; ?>&link_rid={{ x.link_rid }}">
+                                                        <button type="button" class="btn btn-success">Delete</button>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </a>
                                     </div>
                                 </div>
                             </div>
-                            <div class="panel-body">
-                                <?php
-                                if ($recipe_uid == $uid) {
-                                    ?>
-                                    <a href="deleteRicpe.php?rid=<?php echo $rid; ?>">
-                                        <button type="submit" class="btn btn-primary">Delete recipe</button>
-                                    </a>
-                                    <a href="editRicpe.php?rid=<?php echo $rid; ?>">
-                                        <button type="submit" class="btn btn-warning">Edit recipe</button>
-                                    </a>
-                                    <?php
-                                };
-                                ?>
-                                <!--add link-->
-                                <a href="addLink.php?rid=<?php echo $rid; ?>">
-                                    <button type="submit" class="btn btn-info">Link to my recipe</button>
-                                </a>
+                        </div>
+
+
+                        <!-- content -->
+                        <div class="row">
+                            <!-- main col right -->
+                            <div class="col-sm-12">
+                                <br/>
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <form role="form" method="post" name="recipe_form" action="updateRecipe.php"
+                                              enctype="multipart/form-data">
+                                            <input name="rid" type="hidden" value="<?php echo $rid;?>">
+                                            <div class="form-group">
+                                                <label class="tag-div" for="tag">Tag(s)</label></br>
+                                                <span class="input_tags_wrap" id="tag" name="tag"
+                                                      ng-repeat="x in alltag_records">
+                                                    <!-- <span class="checkbox"> -->
+                                                        <label><input type="checkbox" value="{{ x.tid   }}"
+                                                                      name="tag[] "> {{  x.ttitle }}</label>&nbsp;&nbsp;&nbsp;
+                                                    <!-- </span> -->
+                                                </span>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="rtitle">Title</label>
+                                                <input type="text" class="form-control" id="rtitle" name="rtitle" value="<?php echo $rtitle ?>"
+                                                       required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="rserving">Serving</label>
+                                                <input type="number" id="rserving" name="rserving" value="<?php echo $rserving ?>"
+                                                       required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="ingredient">Ingredient(s)</label>
+                                                <div class="input_fields_wrap" id="ingredient" name="ingredient">
+                                                </div>
+                                                <button class="add_field_button btn btn-primary">Add More Ingredients
+                                                </button>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="rdescription">Description</label>
+                                                <textarea class="form-control input-lg" id="rdescription"
+                                                          name="rdescription"><?php echo $rdescription ?></textarea>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="photos">Photo(s)</label>
+                                                <div class="input_photos_wrap" id="photos">
+                                                </div>
+                                                <button class="add_photo_button btn btn-primary">Add More Photos
+                                                </button>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </form>
+
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
-
-                        <!--                    <div class="full col-sm-9">-->
-
-                        <h2>Reviews</h2>
-
-                        <div class="panel panel-default" ng-repeat="x in review_records">
-                            <a href="review.php?r_id={{ x.r_id }}">
-                                <div class="panel-heading">
-                                    <h4>{{ x.rvtitle }}</h4>
-                                </div>
-                                <div class="panel-body">
-                                    <p>{{ x.rtext }}</p>
-                                    <img src="images/star{{ x.rrate }}.svg" style="height: 20px;">
-                                    </br></br>
-                                    <p>posted by: {{ x.r_uname }}</p>
-                                </div>
-                            </a>
-                        </div>
-
-
-                        <!--new review-->
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <h4>New Review</h4>
-                                <hr>
-                                <form role="form" method="post" name="review_form" action="sendReview.php"
-                                      enctype="multipart/form-data">
-
-                                    <input type="hidden" id="rid" name="rid" value="<?php echo $rid; ?>">
-                                    <div class="form-group">
-                                        <label for="rvtitle">Title</label>
-                                        <input type="text" class="form-control" id="rvtitle" name="rvtitle"
-                                               required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="rtext">Review Detail</label>
-                                        <textarea class="form-control input-lg" id="rtext" name="rtext"
-                                                  placeholder="What's your opinion?"></textarea>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="rrate">Rating</label>
-                                        <select id="rrate" name="rrate">
-                                            <option>1</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                            <option>4</option>
-                                            <option>5</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="photos">Photo(s)</label>
-                                        <div class="input_photos_wrap" id="photos">
-                                            <div><input type="file" id="photo[]" name="photo[]"></div>
-                                        </div>
-                                        </br>
-                                        <button class="add_photo_button btn btn-primary">Add More Photos
-                                        </button>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="suggestions">Suggestion(s)</label>
-                                        <div class="input_suggestions_wrap" id="suggestions">
-                                        </div>
-                                        </br>
-                                        <button class="add_suggestion_button btn btn-primary">Add More Suggestions
-                                        </button>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                    </br></br>
-                                </form>
-                            </div>
-                        </div>
                         </br></br>
 
                     </div><!-- /padding -->
@@ -361,12 +334,33 @@ if ($rid != -1) {
             $scope.records = <?php echo json_encode(array_values($json)); ?>;
             $scope.ingredient_records = <?php echo json_encode(array_values($ingredient_json)); ?>;
             $scope.tag_records = <?php echo json_encode(array_values($tag_json)); ?>;
-            $scope.review_records = <?php echo json_encode(array_values($review_json)); ?>;
             $scope.link_records = <?php echo json_encode(array_values($links_json)); ?>;
+            $scope.unit_records = <?php echo json_encode(array_values($unit_json)); ?>;
+            $scope.alltag_records = <?php echo json_encode(array_values($alltag_json)); ?>;
         });
 
 
         $(document).ready(function () {
+            var wrapper = $(".input_fields_wrap"); //Fields wrapper
+            var add_button = $(".add_field_button"); //Add button ID
+            var unit_records = <?php echo json_encode(array_values($unit_json)); ?>;
+
+            var s = '<div><input type="text" name="ingredients[]" required>\n<label for="unit">Unit</label>\n<select id="unit[]" name="unit[]">';
+            for (var i = 0; i < unit_records.length; i++) {
+                s += '<option value="'+ unit_records[i].unit_name + '">' + unit_records[i].unit_name + '</option>';
+            }
+            s += '</select>\n<label for="amount[]">Amount</label>\n<input type="number" class="form-inline" id="amount[]" name="amount[]" required><a href="#" class="remove_field">Remove</a></div>';
+
+            $(add_button).click(function (e) { //on add input button click
+                e.preventDefault();
+                $(wrapper).append(s); //add input box
+            });
+
+            $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+                e.preventDefault();
+                $(this).parent('div').remove();
+            });
+
             var photo_wrapper = $(".input_photos_wrap"); //Fields wrapper
             var add_photo_button = $(".add_photo_button"); //Add button ID
 
@@ -376,19 +370,6 @@ if ($rid != -1) {
             });
 
             $(photo_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-                e.preventDefault();
-                $(this).parent('div').remove();
-            });
-
-            var suggestion_wrapper = $(".input_suggestions_wrap"); //Fields wrapper
-            var add_suggestion_button = $(".add_suggestion_button"); //Add button ID
-
-            $(add_suggestion_button).click(function (e) { //on add input button click
-                e.preventDefault();
-                $(suggestion_wrapper).append('<div><textarea class="form-control input-lg" id="suggestion[]" name="suggestion[]"></textarea><a href="#" class="remove_field">Remove</a></div>'); //add input box
-            });
-
-            $(suggestion_wrapper).on("click", ".remove_field", function (e) { //user click on remove text
                 e.preventDefault();
                 $(this).parent('div').remove();
             });

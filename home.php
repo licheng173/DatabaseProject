@@ -288,7 +288,7 @@ if ($db->connect_error) {
     die('Unable to connect to database: ' . $db->connect_error);
 }
 
-$sql = "select rid, rtitle, rserving, rdescription, sum(rrate)/ count(rid) as rank from recipe natural left join review group by rid;";
+$sql = "select r.rid, r.rtitle, r.rserving, r.rdescription, sum(rv.rrate)/ count(r.rid) as rank from recipe r left join review rv on r.rid = rv.rid group by r.rid;";
 $result = $db->query($sql);
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {

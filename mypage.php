@@ -107,10 +107,10 @@ if ($uid != "") {
         die('Unable to connect to database: ' . $db->connect_error);
     }
 
-    if ($result = $db->prepare("select rid, rtitle, rserving, rdescription, sum(rrate)/ count(rid) as rank from recipe natural left join review where uid = ? group by rid;")) {
+    if ($result = $db->prepare("select r.uid, r.rid, r.rtitle, r.rserving, r.rdescription, sum(rv.rrate)/ count(r.rid) as rank from recipe r left join review rv on r.rid = rv.rid group by r.rid having r.uid = ?;")) {
         $result->bind_param("i", $uid);
         $result->execute();
-        $result->bind_result($rid, $rtitle, $rserving, $rdescription, $rank);
+        $result->bind_result($ruid, $rid, $rtitle, $rserving, $rdescription, $rank);
 
         while ($result->fetch()) {
             $json[$rid]["rid"] = $rid;

@@ -53,6 +53,14 @@ if (!isset($_SESSION['uid'])) {
             font-family: serif;
             font-weight: 200;
         }
+        .tuple{
+            padding-top: 5px;
+            padding-bottom: 5px;
+
+        }
+        li{
+            list-style: none;
+        }
     </style>
 </head>
 <body ng-app="myApp" ng-controller="myCtrl">
@@ -185,21 +193,31 @@ if ($rid != -1) {
 
                 <div class="padding">
                     <div class="full col-sm-9">
-
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Click To Delete</h4>
+                            </div>
+                            <div class="panel-body">
                         <a ng-repeat="x in tag_records" href="deleteTag.php?rid=<?php echo $rid; ?>&tag={{ x.tid }}">
                             <button type="button" class="btn btn-success">{{ x.ttitle }}</button>
                         </a>
                         </br></br>
+                    </div>
+                </div>
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>Ingredients</h4>
                             </div>
                             <div class="panel-body">
-                                <li ng-repeat="x in ingredient_records">{{ x.iname }} : {{ x.iquantity }} g<a
-                                        href="deleteIngredient.php?rid=<?php echo $rid; ?>&iname={{ x.iname }}">
-                                        <button type="button" class="btn btn-success">Delete</button>
-                                    </a></li>
+                                <li ng-repeat="x in ingredient_records">
+                                <div class="tuple">
+                                    <a href="deleteIngredient.php?rid=<?php echo $rid; ?>&iname={{ x.iname }}">
+                                    <button type="button" class="btn btn-success btn-success-edit">Delete</button>
+                                    </a>{{ x.iname }} : {{ x.iquantity }} g
+                                </div>
+                                
+                                </li>
 
                             </div>
                         </div>
@@ -247,7 +265,7 @@ if ($rid != -1) {
                             </div>
                         </div>
 
-
+<div class="panel panel-default">
                         <!-- content -->
                         <div class="row">
                             <!-- main col right -->
@@ -318,6 +336,7 @@ if ($rid != -1) {
                 <!-- /main -->
             </div>
         </div>
+    </div>
     </div>
 
     <!-- script references -->

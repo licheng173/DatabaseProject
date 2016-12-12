@@ -74,7 +74,7 @@ if (!isset($_SESSION['uid'])) {
                                             <div class="panel-body">
                                                 <div>
                                                     <img class="im" src="images/star{{ x.rank }}.svg" style="height: 20px;">
-                                                    <span class="serve-p"> Serving:{{x.rserving }}</span>
+                                                    <span class="serve-p"> Serving:&nbsp;{{x.rserving }}</span>
                                                 </div>
                                                 
                                                 <div class="description-p">{{ x.rdescription }}</div>

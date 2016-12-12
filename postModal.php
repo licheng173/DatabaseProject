@@ -71,7 +71,7 @@ if (!isset($_SESSION['uid'])) {
                                                 <div class="tag-div" for="tag">Tag(s)</div>
                                                 <span class="input_tags_wrap" id="tag" name="tag" ng-repeat="x in records">
                                                     <!-- <span class="checkbox"> -->
-                                                        <label><input type="checkbox" value="{{ x.tid   }}" name="tag[] " > {{  x.ttitle }}</label>&nbsp;&nbsp;&nbsp;
+                                                        <label><input type="checkbox" value="{{ x.tid   }}" name="tag[] " > {{  x.ttitle }}</label>&nbsp;&nbsp;
                                                     <!-- </span> -->
                                                 </span>
                                             </div>
@@ -98,7 +98,7 @@ if (!isset($_SESSION['uid'])) {
                                                             <option ng-repeat="x in unit_records" value="{{ x.unit_name }}">{{ x.unit_name }}</option>
                                                         </select>
                                                         <label for="amount[]">Amount</label>
-                                                        <input type="number" class="form-inline" id="amount[]" name="amount[]"
+                                                        <input type="number" step=any class="form-inline" id="amount[]" name="amount[]"
                                                                required>
                                                     </div>
                                                 </div>

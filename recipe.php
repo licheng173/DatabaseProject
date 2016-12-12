@@ -42,10 +42,13 @@ if (!isset($_SESSION['uid'])) {
         .seperate {
             border-bottom-style: solid;
         }
-        h3 {
+        .newH3 {
             margin-top: 40px;
+        }
+        h3 {
+            
             font-family: serif;
-            font-weight: 200;
+            font-weight: 200px;
         }
     </style>
 </head>
@@ -181,7 +184,7 @@ if ($rid != -1) {
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4><?php echo $rtitle ?></h4>
+                                <h3><?php echo $rtitle ?></h3>
                             </div>
                             <div class="panel-body">
                                 <div class="serving-bar">
@@ -217,30 +220,30 @@ if ($rid != -1) {
                                 </div>
                             </div>
                         </div><!--/row-->
-                        <!-- </div> -->
-                        <!-- </div> -->
                         </div>
+                
                         <div class="panel panel-default">
                         <!-- <div class="panel-heading"> -->
                         <div class="panel-heading">
-                        <div class="row">
+<!--                        <div class="row">-->
                             <h4>Links</h4>
+                        </div>
+                        <div class="panel-body"> 
                             <!-- main col right -->
                             <div class="col-sm-4" ng-repeat="x in link_records">
                                 <a href="recipe.php?rid={{ x.link_rid }}">
                                     <div class="panel panel-default">
-                                        <div class="panel-body">
+                                        
                                             <h4>{{ x.link_rtitle }}</h4>
                                         </div>
-                                    </div>
+                                    
                                 </a>
                             </div>
                             <?php
                                 if ($recipe_uid == $uid) {
                             ?>
-                        </div>
-                        </div>
-                        <div class="panel-body">
+<!--                        </div>-->
+                            <div class="panel-body">
                             <a href="deleteRicpe.php?rid=<?php echo $rid; ?>">
                             <button type="submit" class="btn btn-primary">Delete recipe</button>
                             </a>
@@ -251,13 +254,18 @@ if ($rid != -1) {
                             <a href="addLink.php?rid=<?php echo $rid; ?>">
                                 <button type="submit" class="btn btn-info">Link to my recipe</button>
                             </a>
-                         </div>
-                         </div>
+                            </div>
+                            </div>
+                        </div>
+                        
+<!--
+                        </div>
                     
+-->
                     
 <!--                    <div class="full col-sm-9">-->
                    
-                        <h2>Reviews</h2>
+                        <h3 class="newH3">Reviews</h3>
 
                         <div class="panel panel-default" ng-repeat="x in review_records">
                             <a href="review.php?r_id={{ x.r_id }}">

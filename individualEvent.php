@@ -23,6 +23,11 @@ if (!isset($_SESSION['uid'])) {
 
     <link href="css/styles.css" rel="stylesheet">
     <script type="text/javascript" src="js/angular.min.js"></script>
+    <style type="text/css">
+        .upload {
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
 <?php
@@ -122,7 +127,7 @@ if ($eid != "") {
                                 <div class="panel panel-default">
                                     <div class="panel-heading"><h3>Participants</h3></div>
                                     <div class="panel-body" ng-repeat="x in uname_records">
-                                        <p>{{ x.uname }}</p>
+                                        <button type="button" class="btn btn-primary">{{ x.uname }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +168,7 @@ if ($eid != "") {
 
                                             <div class="form-group">
                                                 <label for="photos">Photo(s)</label>
-                                                <div class="input_photos_wrap" id="photos">
+                                                <div class="input_photos_wrap upload" id="photos">
                                                     <div><input type="file" id="photo[]" name="photo[]"></div>
                                                 </div>
                                                 <button class="add_photo_button btn btn-primary">Add More Photos

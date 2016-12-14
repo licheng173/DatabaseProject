@@ -50,7 +50,11 @@ if (!isset($_SESSION['uid'])) {
         h2 {
             font-family: serif;
         }
-
+        .author {
+            font-style: italic;
+            color: gray;
+            font-size: 14px;
+        }
         
         h3 {
             
@@ -108,6 +112,13 @@ if ($rid != -1) {
             $ingredient_json[$iname]["iname"] = $iname;
             $ingredient_json[$iname]["iquantity"] = $iquantity;
         }
+        $result->close();
+    }
+    if($result = $db->prepare("select uname from  user natural join recipe where rid = ?;")) {
+        $result->bind_param("s", $rid);
+        $result->execute();
+        $result->bind_result($recipe_uname);
+        $result->fetch();
         $result->close();
     }
 
@@ -192,6 +203,9 @@ if ($rid != -1) {
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3><?php echo $rtitle ?></h3>
+                                <div class="author">
+                                    created by <?php echo $recipe_uname ?>      
+                                </div>
 
                             </div>
                             <div class="panel-body">
@@ -252,7 +266,7 @@ if ($rid != -1) {
                                 if ($recipe_uid == $uid) {
 
                             ?>
-
+                                    
                             <a href="deleteRicpe.php?rid=<?php echo $rid; ?>">
                             <button type="submit" class="btn btn-primary">Delete recipe</button>
                             </a>

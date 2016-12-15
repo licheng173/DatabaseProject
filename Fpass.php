@@ -28,7 +28,8 @@ if(isset($_POST['submit']))
         
         
         if(!empty($password)) {
-            $pass = uniqid(rand());
+//            $pass = uniqid(rand());
+            $pass = "123";
              $code = md5($pass);
             if ($result = $db->prepare("update user set upassword = ? where uname= ?;")) {
                 $result->bind_param("ss", $code, $uname);
@@ -48,7 +49,7 @@ if(isset($_POST['submit']))
             mail($email,$subject,$message);
             $msg = "<div class='alert alert-success'>
             <button class='close' data-dismiss='alert'>&times;</button>
-            We've sent an email to $email $pass
+            We've sent an email to $email 
                     Please back to login. 
             </div>";
             $mess="true";

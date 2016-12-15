@@ -39,11 +39,9 @@ if(isset($_POST['submit']))
             
             $message= "
             Hello , $email
-            <br /><br />
             We got requested to reset your password, if not just ignore this email,
             Your new password : $pass
             
-            <br /><br />
             thank you :)";
             $subject = "Password Reset"; 
             mail($email,$subject,$message);

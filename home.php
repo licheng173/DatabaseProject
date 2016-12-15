@@ -250,9 +250,9 @@ if (!isset($_SESSION['uid'])) {
                                 <a href="recipe.php?rid={{ x.rid }}">
                                     <div class="panel panel-default">
                                         <div class="panel-body">
-                                            <img src="imgShow.php?rid={{ x.rid }}" style="width: 100%;">
+                                            <img src="imgShow.php?rid={{ x.rid }}" style="width: 100%; height: 200px;">
                                             <div class="panel-heading">
-                                                <h4>{{ x.rtitle }}</h4>
+                                                <h5>{{ x.rtitle }}</h5>
                                             </div>
                                             <div class="panel-body">
                                                 <div>
@@ -261,7 +261,7 @@ if (!isset($_SESSION['uid'])) {
                                                     <span class="serve-p"> Serving:{{x.rserving }}</span>
                                                 </div>
 
-                                                <div class="description-p">{{ x.rdescription }}</div>
+<!--                                                <div class="description-p">{{ x.rdescription }}</div>-->
                                             </div>
                                         </div>
                                     </div>

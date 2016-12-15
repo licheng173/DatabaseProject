@@ -29,6 +29,7 @@ if(!empty($_POST['username']))
     	$result->close();
     	if(!empty($uid)) {
 			$_SESSION['uid'] = $uid;
+			$_SESSION['uname'] = $username;
 			echo "<script>location.href='mypage.php'</script>";
 		}
 		else 

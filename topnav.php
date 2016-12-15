@@ -22,7 +22,7 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-                <a href="signout.php"><i class="glyphicon glyphicon-user"></i> Sign out &nbsp</a>
+                <a href="signout.php"><?php echo $_SESSION['uname']?>&nbsp;<i class="glyphicon glyphicon-user"></i> Sign out &nbsp;</a>
             </li>
         </ul>
     </nav>

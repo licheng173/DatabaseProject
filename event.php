@@ -158,7 +158,7 @@ if ($uid != "") {
                                 <ul class="nav nav-tabs col-xs-12 col-sm-12 col-md-10">
                                     <li class="active"><a data-toggle="pill" href="#myevent">My Events</a></li>
                                     <li><a data-toggle="pill" href="#discover">Discover</a></li>
-                                    <li><a data-toggle="pill" href="#create">Create a event</a></li>
+                                    <li><a data-toggle="pill" href="#create">Create an event</a></li>
                                 </ul>
 
                                 <div class="tab-content col-xs-12 col-sm-12 col-md-12">

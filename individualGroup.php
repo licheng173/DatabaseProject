@@ -30,8 +30,7 @@ include "../dbconf.inc";
 
 $uid = $_SESSION['uid'];
 $gid = $_GET['gid'];
-$mygroup_json = array();
-$allgroup_json = array();
+$uname_json = array();
 
 if ($gid != "") {
     $db = new mysqli($hostname, $usr, $pwd, $dbname);
@@ -40,12 +39,25 @@ if ($gid != "") {
     }
 
     if ($result = $db->prepare("select gname, gdescription from ggroup where gid = ?;")) {
-        $result->bind_param("i", $gid);
+        $result->bind_param("s", $gid);
         $result->execute();
         $result->bind_result($gname, $gdescription);
         $result->fetch();
         $result->close();
     }
+
+    if ($result = $db->prepare("select uid, uname from ggroup natural join join_group natural join user where gid = ?;")) {
+        $result->bind_param("s", $gid);
+        $result->execute();
+        $result->bind_result($uuid, $uname);
+        while ($result->fetch()) {
+            $uname_json[$uuid]["uname"] = $uname;
+        }
+        $result->close();
+    }
+
+
+
     $db->close();
 }
 ?>
@@ -78,6 +90,16 @@ if ($gid != "") {
                                     <div class="panel-body"><?php echo $gdescription; ?></div>
                                 </div>
                             </div>
+
+                            <!--Participants-->
+                            <div class="col-sm-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><h3>Members</h3></div>
+                                    <div class="panel-body" ng-repeat="x in uname_records">
+                                        <button type="button" class="btn btn-primary">{{ x.uname }}</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div><!--/row-->
                 </div><!-- /col-9 -->
@@ -97,10 +119,8 @@ if ($gid != "") {
 <script type="text/javascript" language="javascript" class="init">
     var app = angular.module("myApp", []);
     app.controller("myCtrl", function ($scope) {
-        $scope.mygroup_records = <?php echo json_encode(array_values($mygroup_json)); ?>;
-        $scope.allgroup_records = <?php echo json_encode(array_values($allgroup_json)); ?>;
+        $scope.uname_records = <?php echo json_encode(array_values($uname_json)); ?>;
     });
 </script>
-
 </body>
 </html>

@@ -137,7 +137,7 @@ if ($result = $db->prepare("select id, tid, ttitle, tctime from tag_search natur
     $result->close();
 }
 
-if ($result = $db->prepare("select id, rid, vtime, rtitle from recipe_view natural join recipe where uid = ? order by vtime desc;")) {
+if ($result = $db->prepare("select id, r.rid, vtime, rtitle from recipe_view rv, recipe r where rv.rid = r.rid and rv.uid = ? order by vtime desc;")) {
     $result->bind_param("i", $uid);
     $result->execute();
     $result->bind_result($rvid, $rid, $vtime, $rtitle);
